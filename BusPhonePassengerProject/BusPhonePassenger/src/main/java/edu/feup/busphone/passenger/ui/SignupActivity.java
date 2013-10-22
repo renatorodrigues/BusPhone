@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.app.Activity;
 
 import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -16,19 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import edu.feup.busphone.passenger.R;
+import edu.feup.busphone.passenger.util.Api;
 import edu.feup.busphone.passenger.util.FormTextWatcher;
-import edu.feup.busphone.passenger.util.NetworkUtilities;
 import edu.feup.busphone.passenger.util.PasswordFontfaceWatcher;
 import edu.feup.busphone.passenger.util.WebServiceCallRunnable;
 
@@ -106,34 +97,6 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
         FormTextWatcher.register(required_fields_, this);
     }
 
-    private class SignupRunnable extends WebServiceCallRunnable {
-        SignupRunnable(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        public void run() {
-            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("identifier", "bus1"));
-            params.add(new BasicNameValuePair("password", "bus1"));
-            JSONObject response = NetworkUtilities.post("http://172.30.2.49/loginBus", params);
-            try {
-                Log.d(TAG, response.toString(2));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-            handler_.post(new Runnable() {
-                @Override
-                public void run() {
-
-                    //Toast.makeText(getBaseContext(), "Olá Renato!", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
     public void signup(View v) {
         final String name = name_edit_.getText().toString();
         final String username = username_edit_.getText().toString();
@@ -144,7 +107,19 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
         final String expiry_month = expiry_month_spinner_.getSelectedItem().toString();
         final String cv2 = cv2_edit_.getText().toString();
 
-        Thread signup_thread = new Thread(new SignupRunnable(getWindow().getDecorView().getHandler()));
+        Thread signup_thread = new Thread(new WebServiceCallRunnable(getWindow().getDecorView().getHandler()) {
+            @Override
+            public void run() {
+                boolean registered = Api.userRegister(name, username, password, card_number);
+
+                handler_.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });
+            }
+        });
         signup_thread.start();
     }
 

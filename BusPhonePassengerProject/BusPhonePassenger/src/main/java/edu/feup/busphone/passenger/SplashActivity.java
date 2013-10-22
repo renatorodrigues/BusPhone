@@ -29,7 +29,7 @@ public class SplashActivity extends Activity {
         logged_in = preferences_.getBoolean(Constants.PREF_LOGGED_IN, false);
 
         // TEMP
-        registered = logged_in = true;
+        //registered = logged_in = true;
 
         if (!registered) {
             cls = SignupActivity.class;

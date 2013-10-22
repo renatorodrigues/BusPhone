@@ -29,9 +29,9 @@ import java.util.ArrayList;
 public class NetworkUtilities {
     private static final String TAG = "NetworkUtilities";
 
-    private static final String HOST = "172.30.2.49";
+    private static final String HOST = "queimadus.dyndns.org";
     private static final String SCHEME = "http";
-    private static final int PORT = 3000;
+    private static final int PORT = 80;
 
     private static HttpClient http_client_;
     private static HttpHost http_host_;
