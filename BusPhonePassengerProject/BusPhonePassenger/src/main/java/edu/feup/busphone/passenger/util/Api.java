@@ -24,7 +24,7 @@ public class Api {
         params.add(new BasicNameValuePair("name", name));
         params.add(new BasicNameValuePair("username", username));
         params.add(new BasicNameValuePair("password", password));
-        params.add(new BasicNameValuePair("credit_card", credit_card));
+        params.add(new BasicNameValuePair("creditcard", credit_card));
         //uri = uri + "?name=" + name + "&username=" + username + "&password=" + password + "&credit_card=" + credit_card;
         JSONObject response = NetworkUtilities.post(uri, params);
         //JSONObject response = NetworkUtilities.get(uri);
