@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Activity;
 
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,8 +17,8 @@ import android.widget.TextView;
 import java.util.Calendar;
 
 import edu.feup.busphone.passenger.R;
-import edu.feup.busphone.passenger.util.Api;
 import edu.feup.busphone.passenger.util.FormTextWatcher;
+import edu.feup.busphone.passenger.util.NetworkUtilities;
 import edu.feup.busphone.passenger.util.PasswordFontfaceWatcher;
 import edu.feup.busphone.passenger.util.WebServiceCallRunnable;
 
@@ -110,7 +109,7 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
         Thread signup_thread = new Thread(new WebServiceCallRunnable(getWindow().getDecorView().getHandler()) {
             @Override
             public void run() {
-                boolean registered = Api.userRegister(name, username, password, card_number);
+                boolean registered = NetworkUtilities.userRegister(name, username, password, card_number);
 
                 handler_.post(new Runnable() {
                     @Override

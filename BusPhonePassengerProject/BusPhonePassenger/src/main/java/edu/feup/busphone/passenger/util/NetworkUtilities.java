@@ -19,22 +19,69 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import edu.feup.busphone.passenger.client.Ticket;
+import edu.feup.busphone.passenger.client.User;
+
 public class NetworkUtilities {
     private static final String TAG = "NetworkUtilities";
 
-    private static final String HOST = "queimadus.dyndns.org";
+    private static final String HOST = "172.30.29.233";
     private static final String SCHEME = "http";
-    private static final int PORT = 80;
+    private static final int PORT = 3000;
+    private static final String BASE_URL = SCHEME + "://" + HOST;
 
     private static HttpClient http_client_;
     private static HttpHost http_host_;
+
+    public static boolean userRegister(String name, String username, String password, String credit_card) {
+        String uri = BASE_URL + "/register";
+
+        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("name", name));
+        params.add(new BasicNameValuePair("username", username));
+        params.add(new BasicNameValuePair("password", password));
+        params.add(new BasicNameValuePair("creditcard", credit_card));
+
+        JSONObject response = NetworkUtilities.post(uri, params);
+
+        try {
+            Log.d(TAG, response.toString(2));
+        } catch (JSONException e) {
+            return false;
+        }
+        // TODO: verify response
+
+        return true;
+    }
+
+    public static String userLogin(String username, String password) {
+        return null;
+    }
+
+    public static User userInfo(String token) {
+        return null;
+    }
+
+    public static ArrayList<Ticket> tickets() {
+        return null;
+    }
+
+    public static boolean busRegister(int id, String password) {
+        return false;
+    }
+
+    public static String busLogin(int id, String password) {
+        return null;
+    }
 
     public static void maybeCreateHttpClient() {
         if (http_client_ == null) {
