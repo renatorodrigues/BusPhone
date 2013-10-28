@@ -27,6 +27,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.feup.busphone.passenger.client.Ticket;
 import edu.feup.busphone.passenger.client.User;
@@ -34,7 +36,7 @@ import edu.feup.busphone.passenger.client.User;
 public class NetworkUtilities {
     private static final String TAG = "NetworkUtilities";
 
-    private static final String HOST = "172.30.29.233";
+    private static final String HOST = "192.168.1.201";
     private static final String SCHEME = "http";
     private static final int PORT = 3000;
     private static final String BASE_URL = SCHEME + "://" + HOST;
@@ -42,7 +44,15 @@ public class NetworkUtilities {
     private static HttpClient http_client_;
     private static HttpHost http_host_;
 
-    public static boolean userRegister(String name, String username, String password, String credit_card) {
+    /**
+     *
+     * @param name
+     * @param username
+     * @param password
+     * @param credit_card
+     * @return "OK" on success, "already in use" if username already exists
+     */
+    public static String userRegister(String name, String username, String password, String credit_card) {
         String uri = BASE_URL + "/register";
 
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -51,20 +61,35 @@ public class NetworkUtilities {
         params.add(new BasicNameValuePair("password", password));
         params.add(new BasicNameValuePair("creditcard", credit_card));
 
-        JSONObject response = NetworkUtilities.post(uri, params);
+        JSONObject response = post(uri, params);
 
+        return response.optString("info");
+    }
+
+    public static HashMap<String, String> userLogin(String username, String password) {
+        String uri = BASE_URL + "/login";
+
+        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("username", username));
+        params.add(new BasicNameValuePair("password", password));
+
+        JSONObject response = post(uri, params);
+        // TODO: remove this
         try {
             Log.d(TAG, response.toString(2));
         } catch (JSONException e) {
-            return false;
+            e.printStackTrace();
         }
-        // TODO: verify response
 
-        return true;
-    }
+        HashMap<String, String> sanitized_response = new HashMap<String, String>();
+        sanitized_response.put("info", response.optString("info"));
 
-    public static String userLogin(String username, String password) {
-        return null;
+        String token = response.optString("token");
+        if (!"".equals(token)) {
+            sanitized_response.put("token", token);
+        }
+
+        return sanitized_response;
     }
 
     public static User userInfo(String token) {
@@ -103,7 +128,6 @@ public class NetworkUtilities {
         try {
             response = http_client_.execute(http_host_, request);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                Log.d(TAG, "status code = 200");
                 return new JSONObject(EntityUtils.toString(response.getEntity()));
             }
 
@@ -133,7 +157,7 @@ public class NetworkUtilities {
         return executeRequest(request);
     }
 
-    public static JSONObject get(String uri) {
+    private static JSONObject get(String uri) {
         return simpleRequest(new HttpGet(uri));
     }
 
@@ -141,7 +165,7 @@ public class NetworkUtilities {
         return simpleRequest(new HttpDelete(uri));
     }
 
-    public static JSONObject post(String uri,
+    private static JSONObject post(String uri,
                                    ArrayList<NameValuePair> parameters) {
         return enclosingRequest(new HttpPost(uri), parameters);
     }
@@ -151,7 +175,7 @@ public class NetworkUtilities {
         return enclosingRequest(new HttpPut(uri), parameters);
     }
 
-    public static boolean isValidResponse(JSONObject response) {
+    private static boolean isValidResponse(JSONObject response) {
         return response != null && "0".equals(response.optString("status"));
     }
 }

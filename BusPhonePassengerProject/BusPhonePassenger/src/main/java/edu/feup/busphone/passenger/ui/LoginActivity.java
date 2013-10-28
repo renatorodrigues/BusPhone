@@ -1,15 +1,25 @@
 package edu.feup.busphone.passenger.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.HashMap;
 
 import edu.feup.busphone.passenger.R;
+import edu.feup.busphone.passenger.client.User;
+import edu.feup.busphone.passenger.util.Constants;
 import edu.feup.busphone.passenger.util.FormTextWatcher;
+import edu.feup.busphone.passenger.util.NetworkUtilities;
 import edu.feup.busphone.passenger.util.PasswordFontfaceWatcher;
+import edu.feup.busphone.passenger.util.WebServiceCallRunnable;
 
 public class LoginActivity extends Activity implements FormTextWatcher.FormListener {
     private static final String TAG = "LoginActivity";
@@ -40,6 +50,36 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
     public void login(View v) {
         final String username = username_edit_.getText().toString();
         final String password = password_edit_.getText().toString();
+
+        Thread login_thread = new Thread(new WebServiceCallRunnable(getWindow().getDecorView().getHandler()) {
+            @Override
+            public void run() {
+                final HashMap<String, String> response = NetworkUtilities.userLogin(username, password);
+
+                handler_.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.containsKey("token")) {
+                            User.getInstance().authenticateUser(response.get("token"));
+
+                            startActivity(new Intent(LoginActivity.this, ViewTicketsActivity.class));
+                            finish();
+                        } else {
+                            int message_id;
+                            if ("bad username/password".equals(response.get("info"))) {
+                                message_id = R.string.login_unsuccessful;
+                            } else {
+                                message_id = R.string.unknown_error;
+                            }
+
+                            Toast.makeText(LoginActivity.this, message_id, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+
+        login_thread.start();
     }
 
     @Override
@@ -54,5 +94,42 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
         }
 
         login_button_.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.login, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!Constants.DEBUG) {
+            menu.removeItem(R.id.action_fill);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_signup:
+                Intent intent = new Intent(this, SignupActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.action_fill:
+                fillForm();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
+
+    private void fillForm() {
+        username_edit_.setText("renatorodrigues");
+        password_edit_.setText("123456789");
     }
 }

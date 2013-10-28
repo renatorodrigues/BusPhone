@@ -13,6 +13,10 @@
     <string name="month">Month</string>
     <string name="year">Year</string>
 
+    <string name="username_already_in_use">Username is already in use.</string>
+    <string name="login_unsuccessful">Check your username and password and try again.</string>
+    <string name="unknown_error">An unknown error has occurred. Try again.</string>
+
     <string-array name="months">
         <item>January</item>
         <item>February</item>

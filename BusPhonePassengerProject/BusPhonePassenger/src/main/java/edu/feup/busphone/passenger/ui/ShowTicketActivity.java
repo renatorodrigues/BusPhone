@@ -15,10 +15,8 @@ public class ShowTicketActivity extends Activity {
         setContentView(R.layout.show_ticket_activity);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.show_ticket, menu);
         return true;
     }

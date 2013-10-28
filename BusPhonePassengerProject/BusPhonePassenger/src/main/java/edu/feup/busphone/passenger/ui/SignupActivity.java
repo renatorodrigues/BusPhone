@@ -1,10 +1,14 @@
 package edu.feup.busphone.passenger.ui;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Activity;
 
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -13,10 +17,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.HashMap;
 
 import edu.feup.busphone.passenger.R;
+import edu.feup.busphone.passenger.client.User;
+import edu.feup.busphone.passenger.util.Constants;
 import edu.feup.busphone.passenger.util.FormTextWatcher;
 import edu.feup.busphone.passenger.util.NetworkUtilities;
 import edu.feup.busphone.passenger.util.PasswordFontfaceWatcher;
@@ -109,12 +117,34 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
         Thread signup_thread = new Thread(new WebServiceCallRunnable(getWindow().getDecorView().getHandler()) {
             @Override
             public void run() {
-                boolean registered = NetworkUtilities.userRegister(name, username, password, card_number);
+                final String registration_response = NetworkUtilities.userRegister(name, username, password, card_number);
+                final boolean registration_success = "OK".equals(registration_response);
+                final HashMap<String, String> login_response = registration_success == true ? NetworkUtilities.userLogin(username, password) : null;
 
                 handler_.post(new Runnable() {
                     @Override
                     public void run() {
+                        if (registration_success) {
+                            String token = null;
+                            if (login_response.containsKey("token")) {
+                                token = login_response.get("token");
+                            }
+                            User.getInstance().authenticateUser(token);
 
+                            Class<?> cls = token != null ? ViewTicketsActivity.class : LoginActivity.class;
+                            Intent intent = new Intent(SignupActivity.this, cls);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            int message_id;
+                            if ("already in use".equals(registration_response)) {
+                                message_id = R.string.username_already_in_use;
+                            } else {
+                                message_id = R.string.unknown_error;
+                            }
+
+                            Toast.makeText(SignupActivity.this, message_id, Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
@@ -139,6 +169,50 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
         }
 
         signup_button_.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.signup, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!Constants.DEBUG) {
+            menu.removeItem(R.id.action_fill);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_login:
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.action_fill:
+                fillForm();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        return true;
+    }
+
+    private void fillForm() {
+        name_edit_.setText("Renato Rodrigues");
+        username_edit_.setText("renatorodrigues");
+        password_edit_.setText("qwerty");
+
+        card_number_edit.setText("4186360089268307");
+        expiry_year_spinner_.setSelection(0);
+        expiry_month_spinner_.setSelection(11);
+        cv2_edit_.setText("245");
     }
 
     private static class ArrayAdapterHint<String> extends ArrayAdapter<String> {
