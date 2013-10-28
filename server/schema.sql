@@ -1,0 +1,28 @@
+CREATE TABLE clients (
+	clientID INTEGER PRIMARY KEY AUTOINCREMENT,
+	username VARCHAR(255),
+	name VARCHAR(255),
+	password VARCHAR(255),
+	creditCard VARCHAR(255),
+	token VARCHAR(255),
+	lastLogged DATETIME
+);
+
+CREATE TABLE tickets (
+	ticketID VARCHAR PRIMARY KEY,
+	clientID_FK INTEGER,
+	busID_FK INTEGER,
+	type VARCHAR(255),
+	time DATETIME,
+	used BOOLEAN,
+	FOREIGN KEY (clientID_FK) REFERENCES clients(clientID),
+	FOREIGN KEY (busID_FK) REFERENCES bus(busID)
+);
+
+CREATE TABLE bus (
+	busID INTEGER PRIMARY KEY AUTOINCREMENT,
+	identifier VARCHAR(255),
+	password VARCHAR(255),
+	token VARCHAR(255),
+	lastLogged DATETIME
+);
