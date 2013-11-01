@@ -1,6 +1,8 @@
 var util = require("./util");
 var auth = require("./auth");
 
+var T1_COST=1.6,T2_COST=2.3,T3_COST=3.5;
+
 exports.buy = function(req, res){
 
 	var db = req.db;
@@ -70,7 +72,8 @@ exports.buy = function(req, res){
 						if(buy){
 							return buy_tickets(id,extra);
 						}else{
-							return util.out(res,0,{t1: t1+db_t1, t2: t2+db_t2, t3: t3+db_t3, extra: extra});
+							var cost = t1*T1_COST+t2*T2_COST+t3*T3_COST;
+							return util.out(res,0,{t1: t1+db_t1, t2: t2+db_t2, t3: t3+db_t3,cost:cost, extra: extra});
 						}
 
 						
