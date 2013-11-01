@@ -28,9 +28,24 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="TicketCounterLabel">
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="TicketCounter">
         <item name="android:textAlignment">center</item>
         <item name="android:gravity">center</item>
+        <item name="android:textSize">50sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="Hero">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">50sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 
 </resources>

@@ -5,7 +5,6 @@ import android.content.Context;
 
 public class BusPhone extends Application {
     private static Context context_;
-    private static String auth_token_ = null;
 
     @Override
     public void onCreate() {

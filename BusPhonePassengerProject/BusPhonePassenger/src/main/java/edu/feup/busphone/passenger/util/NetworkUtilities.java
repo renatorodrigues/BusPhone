@@ -9,7 +9,6 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
@@ -24,19 +23,17 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
-import edu.feup.busphone.passenger.client.Ticket;
-import edu.feup.busphone.passenger.client.User;
+import edu.feup.busphone.passenger.client.Passenger;
+import edu.feup.busphone.passenger.client.TicketsWallet;
 
 public class NetworkUtilities {
     private static final String TAG = "NetworkUtilities";
 
-    private static final String HOST = "192.168.1.201";
+    private static final String HOST = "172.30.43.152";
     private static final String SCHEME = "http";
     private static final int PORT = 3000;
     private static final String BASE_URL = SCHEME + "://" + HOST;
@@ -74,12 +71,6 @@ public class NetworkUtilities {
         params.add(new BasicNameValuePair("password", password));
 
         JSONObject response = post(uri, params);
-        // TODO: remove this
-        try {
-            Log.d(TAG, response.toString(2));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
         HashMap<String, String> sanitized_response = new HashMap<String, String>();
         sanitized_response.put("info", response.optString("info"));
@@ -92,12 +83,35 @@ public class NetworkUtilities {
         return sanitized_response;
     }
 
-    public static User userInfo(String token) {
-        return null;
+    public static void passengerInfo(String token) {
+        String uri = BASE_URL + "/info" + "?token)" + token;
+        JSONObject response = get(uri);
+        Passenger.getInstance().setInfo(response);
     }
 
-    public static ArrayList<Ticket> tickets() {
-        return null;
+    public static TicketsWallet tickets(String token) {
+        String uri = BASE_URL + "/tickets" + "?token=" + token;
+        JSONObject response = get(uri);
+
+        return TicketsWallet.valueOf(response);
+    }
+
+    public static void buy(String token, int t1, int t2, int t3) {
+        String uri = BASE_URL + "/buy";
+
+        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("token", token));
+        params.add(new BasicNameValuePair("t1", Integer.toString(t1)));
+        params.add(new BasicNameValuePair("t2", Integer.toString(t2)));
+        params.add(new BasicNameValuePair("t3", Integer.toString(t3)));
+
+        JSONObject response = post(uri, params);
+
+        try {
+            Log.d(TAG, response.toString(2));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public static boolean busRegister(int id, String password) {

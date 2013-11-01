@@ -29,6 +29,11 @@
             android:label="@string/title_activity_view_tickets" >
         </activity>
         <activity
+            android:name="edu.feup.busphone.passenger.ui.BuyTicketsActivity"
+            android:parentActivityName="edu.feup.busphone.passenger.ui.ViewTicketsActivity"
+            android:label="@string/buy_tickets" >
+        </activity>
+        <activity
             android:name="edu.feup.busphone.passenger.ui.ShowTicketActivity"
             android:label="@string/title_activity_show_ticket" >
         </activity>

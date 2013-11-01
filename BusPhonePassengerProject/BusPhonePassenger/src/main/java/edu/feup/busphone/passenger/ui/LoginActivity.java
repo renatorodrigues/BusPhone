@@ -14,7 +14,7 @@ import android.widget.Toast;
 import java.util.HashMap;
 
 import edu.feup.busphone.passenger.R;
-import edu.feup.busphone.passenger.client.User;
+import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.util.Constants;
 import edu.feup.busphone.passenger.util.FormTextWatcher;
 import edu.feup.busphone.passenger.util.NetworkUtilities;
@@ -60,7 +60,7 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
                     @Override
                     public void run() {
                         if (response.containsKey("token")) {
-                            User.getInstance().authenticateUser(response.get("token"));
+                            Passenger.getInstance().authenticateUser(response.get("token"));
 
                             startActivity(new Intent(LoginActivity.this, ViewTicketsActivity.class));
                             finish();

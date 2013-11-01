@@ -2,7 +2,6 @@ package edu.feup.busphone.passenger.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Activity;
@@ -23,7 +22,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 import edu.feup.busphone.passenger.R;
-import edu.feup.busphone.passenger.client.User;
+import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.util.Constants;
 import edu.feup.busphone.passenger.util.FormTextWatcher;
 import edu.feup.busphone.passenger.util.NetworkUtilities;
@@ -129,7 +128,7 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
                             if (login_response.containsKey("token")) {
                                 token = login_response.get("token");
                             }
-                            User.getInstance().authenticateUser(token);
+                            Passenger.getInstance().authenticateUser(token);
 
                             Class<?> cls = token != null ? ViewTicketsActivity.class : LoginActivity.class;
                             Intent intent = new Intent(SignupActivity.this, cls);
