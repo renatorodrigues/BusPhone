@@ -43,15 +43,15 @@ exports.buy = function(req, res){
 
 					//check if buying more goes over the limit
 			       	var total = {};
-					if(t1+db_t1>10){
+					if(t1>0&&t1+db_t1>10){
 						total.owned_t1 = db_t1;
 						total.bought_t1 = t1;
 					}
-					if(t2+db_t2>10){
+					if(t2>0&&t2+db_t2>10){
 						total.owned_t2 = db_t2;
 						total.bought_t2 = t2;
 					}
-					if(t3+db_t3>10){
+					if(t3>0&&t3+db_t3>10){
 						total.owned_t3 = db_t3;
 						total.bought_t3 = t3;
 					}
