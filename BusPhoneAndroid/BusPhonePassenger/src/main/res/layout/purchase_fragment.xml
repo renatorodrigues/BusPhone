@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirm Purchase"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        style="@style/TitleLight"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/t1_counter_wrapper"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:onClick="showTicket">
+
+            <TextView
+                android:id="@+id/t1_counter_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0"
+                style="@style/TicketCounter" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="T1"
+                style="@style/TicketCounterLabel" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/t2_counter_wrapper"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:onClick="showTicket">
+
+            <TextView
+                android:id="@+id/t2_counter_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0"
+                style="@style/TicketCounter" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="T2"
+                style="@style/TicketCounterLabel" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/t3_counter_wrapper"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:onClick="showTicket">
+
+            <TextView
+                android:id="@+id/t3_counter_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0"
+                style="@style/TicketCounter" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="T3"
+                style="@style/TicketCounterLabel"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/cost_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:text="0 €"
+        style="@style/InvoiceTotal"/>
+
+    <Button
+        android:id="@+id/confirm_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="Buy"/>
+</LinearLayout>

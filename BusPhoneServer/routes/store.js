@@ -58,9 +58,9 @@ exports.buy = function(req, res){
 					
 					var extra;
 					if(t1+t2+t3>=10){
-						if(t1>0&&t1<10) {++t1; extra="t1"}
-						else if(t2>0&&t2<10) {++t2; extra="t2"}
-						else if(t3>0&&t3<10) {++t3; extra="t3"}
+						if(t1>0) {++t1; extra="t1"}
+						else if(t2>0) {++t2; extra="t2"}
+						else if(t3>0) {++t3; extra="t3"}
 					}
 
 					console.log("t1: "+t1+", db_t1: "+db_t1);

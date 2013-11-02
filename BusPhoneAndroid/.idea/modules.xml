@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$USER_HOME$/AndroidStudioProjects/AndroidStudioProjects.iml" filepath="$USER_HOME$/AndroidStudioProjects/AndroidStudioProjects.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BusPhoneAndroid.iml" filepath="$PROJECT_DIR$/BusPhoneAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BusPhonePassenger/BusPhonePassenger.iml" filepath="$PROJECT_DIR$/BusPhonePassenger/BusPhonePassenger.iml" />
+    </modules>
+  </component>
+</project>
+
