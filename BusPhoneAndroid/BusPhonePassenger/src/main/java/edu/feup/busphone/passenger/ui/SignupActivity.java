@@ -23,10 +23,10 @@ import java.util.HashMap;
 
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
-import edu.feup.busphone.passenger.util.FormTextWatcher;
+import edu.feup.busphone.util.text.FormTextWatcher;
 import edu.feup.busphone.passenger.util.NetworkUtilities;
-import edu.feup.busphone.passenger.util.PasswordFontfaceWatcher;
-import edu.feup.busphone.passenger.util.WebServiceCallRunnable;
+import edu.feup.busphone.util.text.PasswordFontfaceWatcher;
+import edu.feup.busphone.util.network.WebServiceCallRunnable;
 
 public class SignupActivity extends Activity implements FormTextWatcher.FormListener {
     private static final String TAG = "SignupActivity";
@@ -179,8 +179,7 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_login:
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(SignupActivity.this, LoginActivity.class));
                 finish();
                 break;
             case R.id.action_fill:

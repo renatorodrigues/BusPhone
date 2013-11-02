@@ -1,4 +1,4 @@
-package edu.feup.busphone.passenger.util;
+package edu.feup.busphone.util.text;
 
 import android.graphics.Typeface;
 import android.text.Editable;

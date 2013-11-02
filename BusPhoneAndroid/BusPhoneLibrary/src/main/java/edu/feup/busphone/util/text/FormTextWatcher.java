@@ -1,9 +1,7 @@
-package edu.feup.busphone.passenger.util;
+package edu.feup.busphone.util.text;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.widget.Button;
 import android.widget.TextView;
 
 public class FormTextWatcher implements TextWatcher {

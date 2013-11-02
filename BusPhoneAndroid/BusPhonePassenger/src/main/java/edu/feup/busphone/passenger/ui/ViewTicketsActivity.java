@@ -1,7 +1,6 @@
 package edu.feup.busphone.passenger.ui;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,13 +14,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.HashMap;
-
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.client.TicketsWallet;
 import edu.feup.busphone.passenger.util.NetworkUtilities;
-import edu.feup.busphone.passenger.util.WebServiceCallRunnable;
+import edu.feup.busphone.util.network.WebServiceCallRunnable;
 
 public class ViewTicketsActivity extends Activity {
     private static final String TAG = "ViewTicketsActivity";

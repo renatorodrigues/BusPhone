@@ -22,7 +22,7 @@ import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.client.TicketsWallet;
 import edu.feup.busphone.passenger.util.NetworkUtilities;
-import edu.feup.busphone.passenger.util.WebServiceCallRunnable;
+import edu.feup.busphone.util.network.WebServiceCallRunnable;
 
 public class BuyTicketsActivity extends Activity {
     private static final String TAG = "BuyTicketsActivity";

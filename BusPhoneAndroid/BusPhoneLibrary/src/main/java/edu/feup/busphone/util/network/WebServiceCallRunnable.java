@@ -1,4 +1,4 @@
-package edu.feup.busphone.passenger.util;
+package edu.feup.busphone.util.network;
 
 import android.os.Handler;
 
