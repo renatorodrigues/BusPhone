@@ -114,20 +114,24 @@ public class ViewTicketsActivity extends Activity {
     }
 
     public void showTicket(View v) {
-        int index = -1;
+        int ticket_type;
         switch (v.getId()) {
             case R.id.t1_counter_wrapper:
-                index = 0;
+                ticket_type = 0;
                 break;
             case R.id.t2_counter_wrapper:
-                index = 1;
+                ticket_type = 1;
                 break;
             case R.id.t3_counter_wrapper:
-                index = 2;
+                ticket_type = 2;
                 break;
+            default:
+                return;
         }
 
-        startActivity(new Intent(ViewTicketsActivity.this, ShowTicketActivity.class));
+        Intent intent = new Intent(ViewTicketsActivity.this, ShowTicketActivity.class);
+        intent.putExtra(ShowTicketActivity.EXTRA_TICKET_TYPE, ticket_type);
+        startActivity(intent);
     }
 
     public void buyTickets(View v) {
