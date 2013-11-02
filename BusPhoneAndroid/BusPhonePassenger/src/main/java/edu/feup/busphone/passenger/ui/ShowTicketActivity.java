@@ -13,6 +13,8 @@ public class ShowTicketActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.show_ticket_activity);
+
+
     }
 
     @Override
@@ -20,5 +22,5 @@ public class ShowTicketActivity extends Activity {
         getMenuInflater().inflate(R.menu.show_ticket, menu);
         return true;
     }
-    
+
 }
