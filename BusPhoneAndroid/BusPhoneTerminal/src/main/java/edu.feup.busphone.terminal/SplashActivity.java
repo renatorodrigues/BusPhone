@@ -1,4 +1,4 @@
-package edu.feup.busphone.passenger;
+package edu.feup.busphone.terminal;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.app.Activity;
 
 import edu.feup.busphone.BusPhone;
-import edu.feup.busphone.passenger.ui.LoginActivity;
-import edu.feup.busphone.passenger.ui.SignupActivity;
-import edu.feup.busphone.passenger.ui.ViewTicketsActivity;
+import edu.feup.busphone.terminal.ui.DecodeTicketActivity;
+import edu.feup.busphone.terminal.ui.LoginActivity;
+import edu.feup.busphone.terminal.ui.SignupActivity;
 
 public class SplashActivity extends Activity {
     private static final String TAG = "SplashActivity";
@@ -23,7 +23,7 @@ public class SplashActivity extends Activity {
         boolean registered, logged_in;
         Class<?> cls;
 
-        preferences_ = getSharedPreferences(BusPhone.Constants.PASSENGER_PREFERENCES, Context.MODE_PRIVATE);
+        preferences_ = getSharedPreferences(BusPhone.Constants.INSPECTOR_PREFERENCES, Context.MODE_PRIVATE);
 
         registered = preferences_.getBoolean(BusPhone.Constants.PREF_REGISTERED, false);
         logged_in = preferences_.getBoolean(BusPhone.Constants.PREF_LOGGED_IN, false);
@@ -33,11 +33,11 @@ public class SplashActivity extends Activity {
         } else if (!logged_in) {
             cls = LoginActivity.class;
         } else {
-            cls = ViewTicketsActivity.class;
+            cls = DecodeTicketActivity.class;
         }
 
         startActivity(new Intent(SplashActivity.this, cls));
         finish();
     }
-
+    
 }

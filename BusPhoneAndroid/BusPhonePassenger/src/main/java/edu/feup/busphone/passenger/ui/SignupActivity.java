@@ -23,7 +23,6 @@ import java.util.HashMap;
 
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
-import edu.feup.busphone.passenger.util.Constants;
 import edu.feup.busphone.passenger.util.FormTextWatcher;
 import edu.feup.busphone.passenger.util.NetworkUtilities;
 import edu.feup.busphone.passenger.util.PasswordFontfaceWatcher;
@@ -174,15 +173,6 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.signup, menu);
         return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!Constants.DEBUG) {
-            menu.removeItem(R.id.action_fill);
-        }
-
-        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override

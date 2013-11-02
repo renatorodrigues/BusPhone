@@ -1,1 +1,1 @@
-include ':BusPhonePassenger', ':BusPhoneInspector', ':BusPhoneTerminal'
+include ':BusPhonePassenger', ':BusPhoneInspector', ':BusPhoneTerminal', ':BusPhoneLibrary'

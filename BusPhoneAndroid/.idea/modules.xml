@@ -5,6 +5,7 @@
       <module fileurl="file://$USER_HOME$/AndroidStudioProjects/AndroidStudioProjects.iml" filepath="$USER_HOME$/AndroidStudioProjects/AndroidStudioProjects.iml" />
       <module fileurl="file://$PROJECT_DIR$/BusPhoneAndroid.iml" filepath="$PROJECT_DIR$/BusPhoneAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/BusPhoneInspector/BusPhoneInspector.iml" filepath="$PROJECT_DIR$/BusPhoneInspector/BusPhoneInspector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BusPhoneLibrary/BusPhoneLibrary.iml" filepath="$PROJECT_DIR$/BusPhoneLibrary/BusPhoneLibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/BusPhonePassenger/BusPhonePassenger.iml" filepath="$PROJECT_DIR$/BusPhonePassenger/BusPhonePassenger.iml" />
       <module fileurl="file://$PROJECT_DIR$/BusPhoneTerminal/BusPhoneTerminal.iml" filepath="$PROJECT_DIR$/BusPhoneTerminal/BusPhoneTerminal.iml" />
     </modules>

@@ -5,11 +5,7 @@ import android.content.SharedPreferences;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import edu.feup.busphone.passenger.BusPhone;
-import edu.feup.busphone.passenger.util.Constants;
+import edu.feup.busphone.BusPhone;
 
 /**
  * Singleton
@@ -36,12 +32,12 @@ public class Passenger {
 
     public void authenticateUser(String token) {
         Context context = BusPhone.getContext();
-        SharedPreferences.Editor preferences_editor = context.getSharedPreferences(Constants.PASSENGER_PREFERENCES, Context.MODE_PRIVATE).edit();
-        preferences_editor.putBoolean(Constants.PREF_REGISTERED, true);
+        SharedPreferences.Editor preferences_editor = context.getSharedPreferences(BusPhone.Constants.PASSENGER_PREFERENCES, Context.MODE_PRIVATE).edit();
+        preferences_editor.putBoolean(BusPhone.Constants.PREF_REGISTERED, true);
 
         if (token != null) {
-            preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
-            preferences_editor.putString(Constants.PREF_AUTH_TOKEN, token);
+            preferences_editor.putBoolean(BusPhone.Constants.PREF_LOGGED_IN, true);
+            preferences_editor.putString(BusPhone.Constants.PREF_AUTH_TOKEN, token);
 
             auth_token_ = token;
         }
@@ -52,8 +48,8 @@ public class Passenger {
     public String getAuthToken() {
         if (auth_token_ == null) {
             Context context = BusPhone.getContext();
-            SharedPreferences preferences = context.getSharedPreferences(Constants.PASSENGER_PREFERENCES, Context.MODE_PRIVATE);
-            auth_token_ = preferences.getString(Constants.PREF_AUTH_TOKEN, null);
+            SharedPreferences preferences = context.getSharedPreferences(BusPhone.Constants.PASSENGER_PREFERENCES, Context.MODE_PRIVATE);
+            auth_token_ = preferences.getString(BusPhone.Constants.PREF_AUTH_TOKEN, null);
         }
 
         return auth_token_;
@@ -61,9 +57,9 @@ public class Passenger {
 
     public void removeCredentials() {
         Context context = BusPhone.getContext();
-        SharedPreferences.Editor preferences_editor = context.getSharedPreferences(Constants.PASSENGER_PREFERENCES, Context.MODE_PRIVATE).edit();
-        preferences_editor.remove(Constants.PREF_LOGGED_IN);
-        preferences_editor.remove(Constants.PREF_AUTH_TOKEN);
+        SharedPreferences.Editor preferences_editor = context.getSharedPreferences(BusPhone.Constants.PASSENGER_PREFERENCES, Context.MODE_PRIVATE).edit();
+        preferences_editor.remove(BusPhone.Constants.PREF_LOGGED_IN);
+        preferences_editor.remove(BusPhone.Constants.PREF_AUTH_TOKEN);
         preferences_editor.commit();
 
         auth_token_ = null;
