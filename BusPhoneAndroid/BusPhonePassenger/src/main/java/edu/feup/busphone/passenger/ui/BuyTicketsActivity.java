@@ -21,7 +21,8 @@ import java.util.HashMap;
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.client.TicketsWallet;
-import edu.feup.busphone.passenger.util.NetworkUtilities;
+import edu.feup.busphone.passenger.util.network.PassengerNetworkUtilities;
+import edu.feup.busphone.util.network.NetworkUtilities;
 import edu.feup.busphone.util.network.WebServiceCallRunnable;
 
 public class BuyTicketsActivity extends Activity {
@@ -127,7 +128,7 @@ public class BuyTicketsActivity extends Activity {
         Thread buy = new Thread(new WebServiceCallRunnable(handler) {
             @Override
             public void run() {
-                final HashMap<String, String> response = NetworkUtilities.buy(token, t1, t2, t3, false);
+                final HashMap<String, String> response = PassengerNetworkUtilities.buy(token, t1, t2, t3, false);
 
                 handler_.post(new Runnable() {
                     @Override
@@ -229,7 +230,7 @@ public class BuyTicketsActivity extends Activity {
                     Thread purchase = new Thread(new WebServiceCallRunnable(handler_) {
                         @Override
                         public void run() {
-                            final HashMap<String, String> response = NetworkUtilities.buy(Passenger.getInstance().getAuthToken(), t1_, t2_, t3_, true);
+                            final HashMap<String, String> response = PassengerNetworkUtilities.buy(Passenger.getInstance().getAuthToken(), t1_, t2_, t3_, true);
 
                             handler_.post(new Runnable() {
                                 @Override

@@ -17,7 +17,8 @@ import android.widget.Toast;
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.client.TicketsWallet;
-import edu.feup.busphone.passenger.util.NetworkUtilities;
+import edu.feup.busphone.passenger.util.network.PassengerNetworkUtilities;
+import edu.feup.busphone.util.network.NetworkUtilities;
 import edu.feup.busphone.util.network.WebServiceCallRunnable;
 
 public class ViewTicketsActivity extends Activity {
@@ -54,7 +55,7 @@ public class ViewTicketsActivity extends Activity {
         Thread tickets = new Thread(new WebServiceCallRunnable(new Handler()) {
             @Override
             public void run() {
-                final TicketsWallet tickets_wallet = NetworkUtilities.tickets(Passenger.getInstance().getAuthToken());
+                final TicketsWallet tickets_wallet = PassengerNetworkUtilities.tickets(Passenger.getInstance().getAuthToken());
                 final boolean success = tickets_wallet != null;
 
                 if (success) {

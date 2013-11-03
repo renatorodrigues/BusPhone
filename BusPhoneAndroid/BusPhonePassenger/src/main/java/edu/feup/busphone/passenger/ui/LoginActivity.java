@@ -15,8 +15,8 @@ import java.util.HashMap;
 
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
+import edu.feup.busphone.passenger.util.network.PassengerNetworkUtilities;
 import edu.feup.busphone.util.text.FormTextWatcher;
-import edu.feup.busphone.passenger.util.NetworkUtilities;
 import edu.feup.busphone.util.text.PasswordFontfaceWatcher;
 import edu.feup.busphone.util.network.WebServiceCallRunnable;
 
@@ -53,7 +53,7 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
         Thread login_thread = new Thread(new WebServiceCallRunnable(getWindow().getDecorView().getHandler()) {
             @Override
             public void run() {
-                final HashMap<String, String> response = NetworkUtilities.userLogin(username, password);
+                final HashMap<String, String> response = PassengerNetworkUtilities.login(username, password);
 
                 handler_.post(new Runnable() {
                     @Override

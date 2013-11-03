@@ -1,9 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/action_login"
-          android:title="Log in"
+          android:title="@string/log_in"
           android:showAsAction="always" />
 
     <item android:id="@+id/action_fill"
-          android:title="Fill form"
+          android:title="@string/fill_form"
           android:showAsAction="never" />
 </menu>

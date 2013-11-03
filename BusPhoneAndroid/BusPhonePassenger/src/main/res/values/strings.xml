@@ -19,6 +19,10 @@
     <string name="buy_tickets">Buy Tickets</string>
 
     <string name="euro">&#8364;</string>
+    <string name="log_out">Log out</string>
+    <string name="log_in">Log in</string>
+    <string name="fill_form">Fill form</string>
+    <string name="sign_up">Sign up</string>
 
     <string-array name="months">
         <item>January</item>
