@@ -1,15 +1,20 @@
 package edu.feup.busphone.terminal.ui;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.sourceforge.zbar.Config;
 import net.sourceforge.zbar.Image;
@@ -17,6 +22,11 @@ import net.sourceforge.zbar.ImageScanner;
 import net.sourceforge.zbar.Symbol;
 import net.sourceforge.zbar.SymbolSet;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+
+import edu.feup.busphone.BusPhone;
 import edu.feup.busphone.terminal.R;
 import edu.feup.busphone.terminal.util.CameraPreview;
 
@@ -34,6 +44,10 @@ public class DecodeTicketActivity extends Activity {
 
     private boolean barcode_scanned_ = false;
     private boolean previewing_ = true;
+
+    private BluetoothAdapter bluetooth_adapter_;
+    private Handler bluetooth_handler_;
+    private Thread bluetooth_thread_;
 
     static {
         System.loadLibrary("iconv");
@@ -73,6 +87,9 @@ public class DecodeTicketActivity extends Activity {
                 }
             }
         });
+
+        bluetooth_adapter_ = BluetoothAdapter.getDefaultAdapter();
+        bluetooth_handler_ = new Handler();
     }
 
     @Override
@@ -123,8 +140,11 @@ public class DecodeTicketActivity extends Activity {
 
                 SymbolSet symbols = scanner_.getResults();
                 for (Symbol symbol : symbols) {
-                    scan_text_.setText("barcode result " + symbol.getData());
+                    String mac_address = symbol.getData();
+                    scan_text_.setText("MAC address: " + mac_address);
                     barcode_scanned_ = true;
+                    bluetooth_thread_ = new Thread(new BluetoothRunnable(mac_address, bluetooth_handler_));
+                    bluetooth_thread_.start();
                 }
             }
         }
@@ -136,6 +156,53 @@ public class DecodeTicketActivity extends Activity {
             auto_focus_handler_.postDelayed(auto_focus_runnable, 1000);
         }
     };
+
+    public class BluetoothRunnable implements Runnable {
+        private boolean running_ = true;
+
+        private String mac_address_;
+        private Handler handler_;
+
+        public BluetoothRunnable(String mac_address, Handler handler) {
+            mac_address_ = mac_address;
+            handler_ = handler;
+        }
+
+        @Override
+        public void run() {
+            Log.d(TAG, "BluetoothRunnable started running");
+            String message = "ISTO FUNCIONA!";
+
+            try {
+                byte[] buffer = message.getBytes("UTF-8");
+
+                BluetoothDevice bluetooth_device = bluetooth_adapter_.getRemoteDevice(mac_address_);
+                BluetoothSocket bluetooth_socket = bluetooth_device.createInsecureRfcommSocketToServiceRecord(BusPhone.Constants.VALIDATE_CHANNEL_UUID);
+
+                if (bluetooth_socket != null) {
+                    bluetooth_socket.connect();
+
+                    if (bluetooth_socket.isConnected()) {
+                        OutputStream output_stream = bluetooth_socket.getOutputStream();
+                        Thread.sleep(1000);
+                        output_stream.write(buffer);
+                        bluetooth_socket.close();
+                        handler_.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(DecodeTicketActivity.this, "Message sent", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

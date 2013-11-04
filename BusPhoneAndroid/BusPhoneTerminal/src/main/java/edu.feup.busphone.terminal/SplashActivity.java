@@ -28,6 +28,8 @@ public class SplashActivity extends Activity {
         registered = preferences_.getBoolean(BusPhone.Constants.PREF_REGISTERED, false);
         logged_in = preferences_.getBoolean(BusPhone.Constants.PREF_LOGGED_IN, false);
 
+        registered = logged_in = true;
+
         if (!registered) {
             cls = SignupActivity.class;
         } else if (!logged_in) {

@@ -140,6 +140,13 @@ public class ShowTicketActivity extends Activity {
                         stop();
                     } else {
                         client_.close();
+
+                        handler_.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ShowTicketActivity.this, "TIMEOUT", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 }
             } catch (IOException e) {

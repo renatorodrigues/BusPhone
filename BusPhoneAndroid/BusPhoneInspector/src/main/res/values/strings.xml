@@ -1,3 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BusPhoneInspector</string>
+
+    <string name="app_name">BusPhone Inspector</string>
+    <string name="title_activity_authentication">Authentication</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_splash">Bus Phone Inspector</string>
+
 </resources>
