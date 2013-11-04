@@ -24,6 +24,7 @@ import edu.feup.busphone.BusPhone;
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.util.qrcode.Contents;
 import edu.feup.busphone.passenger.util.qrcode.QRCodeEncoder;
+import edu.feup.busphone.util.bluetooth.BluetoothRunnable;
 
 public class ShowTicketActivity extends Activity {
     private static final String TAG = "ShowTicketActivity";
@@ -76,28 +77,25 @@ public class ShowTicketActivity extends Activity {
 
         bluetooth_handler_ = new Handler();
         // Bluetooth listener background thread
-        bluetooth_listener_thread_ = new Thread(new BluetoothListenerRunnable(bluetooth_handler_));
-
+        bluetooth_listener_thread_ = new Thread(new PassengerBluetoothRunnable("TICKET-ID", bluetooth_handler_));
         bluetooth_listener_thread_.start();
     }
 
-    public class BluetoothListenerRunnable implements Runnable {
+    public class PassengerBluetoothRunnable extends BluetoothRunnable {
         private static final int TIMEOUT = 100000;
 
         private boolean running_ = true;
 
-        private Handler handler_;
-        private BluetoothSocket client_;
-        private BluetoothServerSocket bluetooth_socket_;
+        private BluetoothServerSocket bluetooth_server_socket_;
 
-        public BluetoothListenerRunnable(Handler handler) {
-            handler_ = handler;
+        public PassengerBluetoothRunnable(String ticket_id, Handler handler) {
+            super(handler);
         }
 
         @Override
         public void run() {
             try {
-                bluetooth_socket_ = bluetooth_adapter_.listenUsingInsecureRfcommWithServiceRecord(BusPhone.Constants.VALIDATE_CHANNEL_NAME, BusPhone.Constants.VALIDATE_CHANNEL_UUID);
+                bluetooth_server_socket_ = bluetooth_adapter_.listenUsingInsecureRfcommWithServiceRecord(BusPhone.Constants.VALIDATE_CHANNEL_NAME, BusPhone.Constants.VALIDATE_CHANNEL_UUID);
 
                 int timeout;
                 int max_timeout;
@@ -106,48 +104,22 @@ public class ShowTicketActivity extends Activity {
                 byte[] buffer;
 
                 while (running_) {
-                    client_ = bluetooth_socket_.accept(TIMEOUT);
+                    bluetooth_socket_ = bluetooth_server_socket_.accept(TIMEOUT);
 
                     timeout = 0;
                     max_timeout = 32;
                     available = 0;
 
-                    InputStream input_stream = client_.getInputStream();
+                    final String message = receive();
 
-                    while (running_ && (available = input_stream.available()) == 0 && timeout < max_timeout) {
-                        ++timeout;
-
-                        try {
-                            Thread.sleep(250);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                    handler_.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ShowTicketActivity.this, message, Toast.LENGTH_SHORT).show();
                         }
-                    }
+                    });
 
-                    if (available > 0) {
-                        buffer = new byte[available];
-                        available = input_stream.read(buffer);
-
-                        final String reply = new String(buffer);
-
-                        handler_.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ShowTicketActivity.this, reply, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                        stop();
-                    } else {
-                        client_.close();
-
-                        handler_.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ShowTicketActivity.this, "TIMEOUT", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
+                    stop();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -158,8 +130,8 @@ public class ShowTicketActivity extends Activity {
             running_ = false;
 
             try {
-                client_.close();
                 bluetooth_socket_.close();
+                bluetooth_server_socket_.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

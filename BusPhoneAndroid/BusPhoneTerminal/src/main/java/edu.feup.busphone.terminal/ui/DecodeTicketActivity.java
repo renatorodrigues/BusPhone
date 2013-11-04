@@ -23,12 +23,14 @@ import net.sourceforge.zbar.Symbol;
 import net.sourceforge.zbar.SymbolSet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import edu.feup.busphone.BusPhone;
 import edu.feup.busphone.terminal.R;
 import edu.feup.busphone.terminal.util.CameraPreview;
+import edu.feup.busphone.util.bluetooth.BluetoothRunnable;
 
 public class DecodeTicketActivity extends Activity {
     private static final String TAG = "DecodeTicketActivity";
@@ -143,7 +145,7 @@ public class DecodeTicketActivity extends Activity {
                     String mac_address = symbol.getData();
                     scan_text_.setText("MAC address: " + mac_address);
                     barcode_scanned_ = true;
-                    bluetooth_thread_ = new Thread(new BluetoothRunnable(mac_address, bluetooth_handler_));
+                    bluetooth_thread_ = new Thread(new TerminalBluetoothRunnable(mac_address, bluetooth_handler_));
                     bluetooth_thread_.start();
                 }
             }
@@ -157,47 +159,60 @@ public class DecodeTicketActivity extends Activity {
         }
     };
 
-    public class BluetoothRunnable implements Runnable {
+    public class TerminalBluetoothRunnable extends BluetoothRunnable {
         private boolean running_ = true;
 
         private String mac_address_;
-        private Handler handler_;
 
-        public BluetoothRunnable(String mac_address, Handler handler) {
+
+        public TerminalBluetoothRunnable(String mac_address, Handler handler) {
+            super(handler);
+
+            BluetoothDevice bluetooth_device = bluetooth_adapter_.getRemoteDevice(mac_address);
+            try {
+                bluetooth_socket_ = bluetooth_device.createInsecureRfcommSocketToServiceRecord(BusPhone.Constants.VALIDATE_CHANNEL_UUID);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             mac_address_ = mac_address;
-            handler_ = handler;
+
         }
 
         @Override
         public void run() {
             Log.d(TAG, "BluetoothRunnable started running");
-            String message = "ISTO FUNCIONA!";
+            String message = "BUSTO!";
 
             try {
                 byte[] buffer = message.getBytes("UTF-8");
 
-                BluetoothDevice bluetooth_device = bluetooth_adapter_.getRemoteDevice(mac_address_);
-                BluetoothSocket bluetooth_socket = bluetooth_device.createInsecureRfcommSocketToServiceRecord(BusPhone.Constants.VALIDATE_CHANNEL_UUID);
+                if (bluetooth_socket_ != null) {
+                    bluetooth_socket_.connect();
 
-                if (bluetooth_socket != null) {
-                    bluetooth_socket.connect();
-
-                    if (bluetooth_socket.isConnected()) {
-                        OutputStream output_stream = bluetooth_socket.getOutputStream();
-                        Thread.sleep(1000);
-                        output_stream.write(buffer);
-                        bluetooth_socket.close();
+                    if (bluetooth_socket_.isConnected()) {
+                        send(message);
                         handler_.post(new Runnable() {
                             @Override
                             public void run() {
                                 Toast.makeText(DecodeTicketActivity.this, "Message sent", Toast.LENGTH_SHORT).show();
                             }
                         });
+
+                        final String response = receive();
+
+                        handler_.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(DecodeTicketActivity.this, response, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        bluetooth_socket_.close();
+
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
