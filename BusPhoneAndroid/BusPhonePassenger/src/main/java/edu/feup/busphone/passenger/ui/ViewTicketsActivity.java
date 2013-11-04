@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,13 +18,12 @@ import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.client.TicketsWallet;
 import edu.feup.busphone.passenger.util.network.PassengerNetworkUtilities;
-import edu.feup.busphone.util.network.NetworkUtilities;
 import edu.feup.busphone.util.network.WebServiceCallRunnable;
 
 public class ViewTicketsActivity extends Activity {
     private static final String TAG = "ViewTicketsActivity";
 
-    private ListView active_tickets_list_;
+    public static final int BUY_TICKETS_REQUEST = 1;
 
     private ArrayAdapter<String> adapter_;
 
@@ -32,17 +31,25 @@ public class ViewTicketsActivity extends Activity {
     private TextView t2_counter_text_;
     private TextView t3_counter_text_;
 
+    // Validated tickets elements
+    private TextView validated_ticket_text_;
+    private LinearLayout validated_ticket_wrapper_;
+    private TextView validated_ticket_type_text_;
+    private TextView validated_ticket_time_left_text_;
+
     private Button buy_button_;
+
+    private View progress_overlay_;
 
     @Override
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
         setContentView(R.layout.view_tickets_activity);
 
-        active_tickets_list_ = (ListView) findViewById(R.id.active_tickets_list);
-
-        adapter_ = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-        active_tickets_list_.setAdapter(adapter_);
+        validated_ticket_text_ = (TextView) findViewById(R.id.validated_ticket_text);
+        validated_ticket_wrapper_ = (LinearLayout) findViewById(R.id.validated_ticket_wrapper);
+        validated_ticket_type_text_ = (TextView) findViewById(R.id.validated_ticket_type_text);
+        validated_ticket_time_left_text_ = (TextView) findViewById(R.id.validated_ticket_time_left_text);
 
         t1_counter_text_ = (TextView) findViewById(R.id.t1_counter_text);
         t2_counter_text_ = (TextView) findViewById(R.id.t2_counter_text);
@@ -50,8 +57,16 @@ public class ViewTicketsActivity extends Activity {
 
         buy_button_ = (Button) findViewById(R.id.add_tickets_button);
 
-        final View progress_overlay = ((ViewStub) findViewById(R.id.progress_stub)).inflate();
+        progress_overlay_ = ((ViewStub) findViewById(R.id.progress_stub)).inflate();
 
+        setValidatedTicketVisible(false);
+
+        Passenger.getInstance().loadLocalTicketsWallet();
+
+        refreshTickets();
+    }
+
+    public void refreshTickets() {
         Thread tickets = new Thread(new WebServiceCallRunnable(new Handler()) {
             @Override
             public void run() {
@@ -68,10 +83,10 @@ public class ViewTicketsActivity extends Activity {
                         if (success) {
                             populateView();
                         } else {
-                            Toast.makeText(ViewTicketsActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ViewTicketsActivity.this, "Couldn't get your tickets", Toast.LENGTH_SHORT).show();
                         }
 
-                        progress_overlay.setVisibility(View.INVISIBLE);
+                        progress_overlay_.setVisibility(View.INVISIBLE);
                     }
                 });
             }
@@ -111,6 +126,13 @@ public class ViewTicketsActivity extends Activity {
         return true;
     }
 
+    public void setValidatedTicketVisible(boolean visible) {
+        int visibility = visible ? View.VISIBLE : View.INVISIBLE;
+
+        validated_ticket_text_.setVisibility(visibility);
+        validated_ticket_wrapper_.setVisibility(visibility);
+    }
+
     public void showTicket(View v) {
         int ticket_type;
         switch (v.getId()) {
@@ -127,13 +149,33 @@ public class ViewTicketsActivity extends Activity {
                 return;
         }
 
-        Intent intent = new Intent(ViewTicketsActivity.this, ShowTicketActivity.class);
-        intent.putExtra(ShowTicketActivity.EXTRA_TICKET_TYPE, ticket_type);
-        startActivity(intent);
+        int tickets_count = Passenger.getInstance().getTicketsWallet().getCount(ticket_type);
+        if (tickets_count == 0) {
+            Toast.makeText(ViewTicketsActivity.this, R.string.need_ticket, Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(ViewTicketsActivity.this, ShowTicketActivity.class);
+            intent.putExtra(ShowTicketActivity.EXTRA_TICKET_TYPE, ticket_type);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int request_code, int result_code, Intent data) {
+        if (request_code == BUY_TICKETS_REQUEST) {
+            if (result_code == BuyTicketsActivity.RESULT_OK) {
+                boolean new_tickets = data.getBooleanExtra(BuyTicketsActivity.EXTRA_NEW_TICKETS, false);
+                if (new_tickets) {
+                    refreshTickets();
+                    Toast.makeText(this, "New tickets added", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        }
+
     }
 
     public void buyTickets(View v) {
         Intent intent = new Intent(ViewTicketsActivity.this, BuyTicketsActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, BUY_TICKETS_REQUEST);
     }
 }

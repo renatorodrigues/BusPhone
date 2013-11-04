@@ -24,6 +24,10 @@
     <string name="fill_form">Fill form</string>
     <string name="sign_up">Sign up</string>
 
+    <string name="none">None</string>
+    <string name="extra_ticket">Extra Ticket:</string>
+    <string name="need_ticket">No tickets to validate.</string>
+
     <string-array name="months">
         <item>January</item>
         <item>February</item>

@@ -28,9 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:clickable="true"
-            android:onClick="showTicket">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/t1_counter_text"
@@ -52,9 +50,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:clickable="true"
-            android:onClick="showTicket">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/t2_counter_text"
@@ -76,9 +72,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:clickable="true"
-            android:onClick="showTicket">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/t3_counter_text"
@@ -105,6 +99,14 @@
         android:layout_marginTop="10dp"
         android:text="0 €"
         style="@style/InvoiceTotal"/>
+
+    <TextView
+        android:id="@+id/extra_ticket_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/extra_ticket"
+        style="@style/InvoiceLabel"/>
 
     <Button
         android:id="@+id/confirm_button"

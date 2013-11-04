@@ -76,4 +76,11 @@ public class Passenger {
     public void setInfo(JSONObject response) {
 
     }
+
+    public void loadLocalTicketsWallet() {
+        Context context = BusPhone.getContext();
+        SharedPreferences preferences = context.getSharedPreferences(BusPhone.Constants.PASSENGER_PREFERENCES, Context.MODE_PRIVATE);
+
+
+    }
 }

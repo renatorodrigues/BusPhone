@@ -19,23 +19,41 @@
         android:id="@+id/hero_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:text="My awesome tickets"
         style="@style/Hero"/>
 
     <TextView
-        android:id="@+id/validated_tickets_text"
+        android:id="@+id/validated_ticket_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/hero_text"
-        android:text="Validated Tickets"
+        android:layout_above="@+id/validated_ticket_wrapper"
+        android:text="Validated Ticket"
         style="@style/SectionHeader" />
 
-    <ListView
-        android:id="@+id/active_tickets_list"
+    <LinearLayout
+        android:id="@id/validated_ticket_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/validated_tickets_text"
-        android:layout_alignBottom="@+id/available_tickets_text"/>
+        android:orientation="horizontal"
+        android:layout_above="@+id/available_tickets_text">
+
+        <TextView
+            android:id="@+id/validated_ticket_type_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="T1"
+            style="@style/TicketCounter" />
+
+        <TextView
+            android:id="@+id/validated_ticket_time_left_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="10:05:02"
+            style="@style/TicketTimer" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@id/available_tickets_text"

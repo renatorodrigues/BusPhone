@@ -3,12 +3,13 @@ package edu.feup.busphone.passenger.ui;
 import android.app.ActionBar;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,11 +23,12 @@ import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.client.TicketsWallet;
 import edu.feup.busphone.passenger.util.network.PassengerNetworkUtilities;
-import edu.feup.busphone.util.network.NetworkUtilities;
 import edu.feup.busphone.util.network.WebServiceCallRunnable;
 
 public class BuyTicketsActivity extends Activity {
     private static final String TAG = "BuyTicketsActivity";
+
+    public static final String EXTRA_NEW_TICKETS = "new_tickets";
 
     private static final int MAX_TICKETS_PER_TYPE = 10;
 
@@ -56,12 +58,6 @@ public class BuyTicketsActivity extends Activity {
 
         ActionBar action_bar = getActionBar();
         action_bar.setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.buy_tickets, menu);
-        return true;
     }
 
     public void increment(View v) {
@@ -134,7 +130,11 @@ public class BuyTicketsActivity extends Activity {
                     @Override
                     public void run() {
                         if ("OK".equals(response.get("info"))) {
-                            showPurchaseDialog(t1, t2, t3, Double.parseDouble(response.get("cost")));
+                            String extra = null;
+                            if (response.containsKey("extra")) {
+                                extra = response.get("extra");
+                            }
+                            showPurchaseDialog(t1, t2, t3, Double.parseDouble(response.get("cost")), extra);
                         } else {
                             Toast.makeText(BuyTicketsActivity.this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
                         }
@@ -145,8 +145,8 @@ public class BuyTicketsActivity extends Activity {
         buy.start();
     }
 
-    public void showPurchaseDialog(int t1, int t2, int t3, double cost) {
-        PurchaseDialogFragment.newInstance(t1, t2, t3, cost).show(getFragmentManager(), "purchase_dialog");
+    public void showPurchaseDialog(int t1, int t2, int t3, double cost, String extra) {
+        PurchaseDialogFragment.newInstance(t1, t2, t3, cost, extra).show(getFragmentManager(), "purchase_dialog");
     }
 
     public static class PurchaseDialogFragment extends DialogFragment {
@@ -160,12 +160,15 @@ public class BuyTicketsActivity extends Activity {
         private static final String KEY_EXTRA = "extra";
         private static final String KEY_COST = "cost";
 
+        private Activity activity_;
+
         private Handler handler_;
 
         private TextView t1_counter_text_;
         private TextView t2_counter_text_;
         private TextView t3_counter_text_;
         private TextView cost_text_;
+        private TextView extra_ticket_text_;
 
         private Button confirm_button_;
 
@@ -173,10 +176,9 @@ public class BuyTicketsActivity extends Activity {
         private int t2_;
         private int t3_;
         private double cost_;
-
         private String extra_ = null;
 
-        static PurchaseDialogFragment newInstance(int t1, int t2, int t3, double cost) {
+        static PurchaseDialogFragment newInstance(int t1, int t2, int t3, double cost, String extra) {
             PurchaseDialogFragment purchase_fragment = new PurchaseDialogFragment();
 
             Bundle args = new Bundle();
@@ -184,6 +186,7 @@ public class BuyTicketsActivity extends Activity {
             args.putInt(KEY_T2_COUNT, t2);
             args.putInt(KEY_T3_COUNT, t3);
             args.putDouble(KEY_COST, cost);
+            args.putString(KEY_EXTRA, extra);
             purchase_fragment.setArguments(args);
 
             return purchase_fragment;
@@ -198,10 +201,7 @@ public class BuyTicketsActivity extends Activity {
             t2_ = args.getInt(KEY_T2_COUNT);
             t3_ = args.getInt(KEY_T3_COUNT);
             cost_ = Math.round(args.getDouble(KEY_COST) * 100.0) / 100.0;
-
-            if (args.containsKey(KEY_EXTRA)) {
-                extra_ = args.getString(KEY_EXTRA);
-            }
+            extra_ = args.getString(KEY_EXTRA);
 
             handler_ = getActivity().getWindow().getDecorView().getHandler();
 
@@ -216,12 +216,21 @@ public class BuyTicketsActivity extends Activity {
             t2_counter_text_ = (TextView) v.findViewById(R.id.t2_counter_text);
             t3_counter_text_ = (TextView) v.findViewById(R.id.t3_counter_text);
             cost_text_ = (TextView) v.findViewById(R.id.cost_text);
+            extra_ticket_text_ = (TextView) v.findViewById(R.id.extra_ticket_text);
 
             t1_counter_text_.setText(Integer.toString(t1_));
             t2_counter_text_.setText(Integer.toString(t2_));
             t3_counter_text_.setText(Integer.toString(t3_));
 
             cost_text_.setText(Double.toString(cost_) + " " + getResources().getString(R.string.euro));
+
+            if (extra_ != null) {
+                extra_ticket_text_.setText(extra_.toUpperCase());
+            }
+
+            Resources r = getResources();
+            extra_ticket_text_.setText(r.getString(R.string.extra_ticket) + " " + (extra_ != null ? extra_.toUpperCase() : r.getString(R.string.none)));
+
 
             confirm_button_ = (Button) v.findViewById(R.id.confirm_button);
             confirm_button_.setOnClickListener(new View.OnClickListener() {
@@ -235,7 +244,7 @@ public class BuyTicketsActivity extends Activity {
                             handler_.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    getActivity().finish();
+                                    ((BuyTicketsActivity) getActivity()).returnToParentActivity(true);
                                 }
                             });
                         }
@@ -251,6 +260,13 @@ public class BuyTicketsActivity extends Activity {
         public void onDismiss(DialogInterface dialog) {
             super.onDismiss(dialog);
         }
+    }
+
+    public void returnToParentActivity(boolean bought_tickets) {
+        Intent return_intent = new Intent();
+        return_intent.putExtra(EXTRA_NEW_TICKETS, bought_tickets);
+        setResult(RESULT_OK, return_intent);
+        finish();
     }
 
 }
