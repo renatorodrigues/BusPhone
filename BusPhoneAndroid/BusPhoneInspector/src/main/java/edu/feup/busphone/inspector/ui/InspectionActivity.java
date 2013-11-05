@@ -5,12 +5,12 @@ import android.view.Menu;
 
 import edu.feup.busphone.inspector.R;
 
-public class AuthenticationActivity extends CameraActivity {
+public class InspectionActivity extends CameraActivity {
 
     @Override
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
-        setContentView(R.layout.authentication_activity);
+        setContentView(R.layout.inspection_activity);
     }
 
     @Override
@@ -20,8 +20,7 @@ public class AuthenticationActivity extends CameraActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.authentication, menu);
+        getMenuInflater().inflate(R.menu.inspection, menu);
         return true;
     }
-    
 }

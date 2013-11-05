@@ -27,7 +27,6 @@ dependencies {
     compile project(':BusPhoneLibrary')
     compile files('libs/zbar.jar')
 }
-
 task copyNativeLibs(type: Copy) {
     from(new File('libs')) { include '**' }
     into new File(buildDir, 'native-libs')

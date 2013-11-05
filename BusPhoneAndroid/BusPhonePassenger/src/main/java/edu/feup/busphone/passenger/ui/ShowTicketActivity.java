@@ -2,7 +2,6 @@ package edu.feup.busphone.passenger.ui;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.app.Activity;
@@ -20,7 +19,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import edu.feup.busphone.BusPhone;
 import edu.feup.busphone.passenger.R;
@@ -28,7 +26,8 @@ import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.client.TicketsWallet;
 import edu.feup.busphone.passenger.util.qrcode.Contents;
 import edu.feup.busphone.passenger.util.qrcode.QRCodeEncoder;
-import edu.feup.busphone.util.bluetooth.BluetoothRunnable;
+import edu.feup.busphone.ui.ProgressDialogFragment;
+import edu.feup.busphone.hardware.bluetooth.BluetoothRunnable;
 
 public class ShowTicketActivity extends Activity {
     private static final String TAG = "ShowTicketActivity";
@@ -42,6 +41,8 @@ public class ShowTicketActivity extends Activity {
 
     private ImageView qr_code_image_;
     private LinearLayout status_linear_layout_;
+
+    private ProgressDialogFragment progress_dialog_fragment_;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,16 +117,18 @@ public class ShowTicketActivity extends Activity {
                     handler_.post(new Runnable() {
                         @Override
                         public void run() {
-                            addStatus("Sending ticket UUID...");
+                            progress_dialog_fragment_ = ProgressDialogFragment.newInstance("Awaiting validation", true);
+                            progress_dialog_fragment_.show(getFragmentManager(), "show_ticket_progress");
                         }
                     });
 
                     final String response = receive();
-
+                    final String message = "ACK".equals(response) ? "Ticket successfully validated." : "Invalid ticket.";
                     handler_.post(new Runnable() {
                         @Override
                         public void run() {
-                            addStatus("Ticket successfully validated.");
+                            progress_dialog_fragment_.dismiss();
+                            addStatus(message);
                         }
                     });
 

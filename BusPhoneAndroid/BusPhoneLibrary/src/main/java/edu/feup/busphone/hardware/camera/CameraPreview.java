@@ -1,4 +1,4 @@
-package edu.feup.busphone.terminal.util;
+package edu.feup.busphone.hardware.camera;
 
 import android.content.Context;
 import android.hardware.Camera;
@@ -70,6 +70,5 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         camera_.setPreviewCallback(preview_callback_);
         camera_.startPreview();
         camera_.autoFocus(auto_focus_callback_);
-
     }
 }

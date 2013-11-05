@@ -2,6 +2,7 @@ package edu.feup.busphone.passenger.ui;
 
 import android.app.ActionBar;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -230,7 +231,6 @@ public class BuyTicketsActivity extends Activity {
 
             Resources r = getResources();
             extra_ticket_text_.setText(r.getString(R.string.extra_ticket) + " " + (extra_ != null ? extra_.toUpperCase() : r.getString(R.string.none)));
-
 
             confirm_button_ = (Button) v.findViewById(R.id.confirm_button);
             confirm_button_.setOnClickListener(new View.OnClickListener() {

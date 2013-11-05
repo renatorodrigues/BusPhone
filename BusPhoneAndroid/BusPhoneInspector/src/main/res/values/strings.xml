@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_splash">Bus Phone Inspector</string>
+    <string name="title_activity_inspection">Inspection</string>
 
 </resources>

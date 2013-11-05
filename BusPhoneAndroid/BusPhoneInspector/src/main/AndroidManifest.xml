@@ -8,6 +8,11 @@
         android:minSdkVersion="17"
         android:targetSdkVersion="17" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -20,12 +25,16 @@
         <activity
             android:name="edu.feup.busphone.inspector.SplashActivity"
             android:label="@string/title_activity_splash"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="edu.feup.busphone.inspector.ui.InspectionActivity"
+            android:label="@string/title_activity_inspection" >
         </activity>
     </application>
 

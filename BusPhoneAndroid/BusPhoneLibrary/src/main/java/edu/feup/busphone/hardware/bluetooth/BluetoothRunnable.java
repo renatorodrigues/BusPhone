@@ -1,4 +1,4 @@
-package edu.feup.busphone.util.bluetooth;
+package edu.feup.busphone.hardware.bluetooth;
 
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
