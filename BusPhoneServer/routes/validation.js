@@ -15,27 +15,27 @@ exports.validate = function(req, res){
 
 	function check_ticket(bus_id){
 		db.serialize(function() {
-			db.all("SELECT * FROM tickets WHERE ticketID=$ticket_id AND used=0",
+			db.all("SELECT type FROM tickets WHERE ticketID=$ticket_id AND used=0",
 				{$ticket_id:ticket_id }, function(err, rows) {
 
 					if(err!=null){ return util.out(res,3,{err:err.toString()})}
 
 					if(rows.length>0)
-						return use_ticket(bus_id);
+						return use_ticket(bus_id, rows[0].type);
 					else
 						return util.out(res,8);
   			});
   		});
 	}
 
-	function use_ticket(bus_id){
+	function use_ticket(bus_id,type){
 		db.serialize(function() {
 			var q = db.prepare("UPDATE tickets SET used=1, time=Datetime('now','localtime'), busID_FK=$bus_id WHERE ticketID=$ticket_id");
 			q.run({$bus_id:bus_id, $ticket_id:ticket_id},function(err,rows){
 
 				if(err!=null){ return util.out(res,3,{err:err.toString()})}
 
-				return util.out(res,0);
+				return util.out(res,0,{type:type});
 			});
   		});	
 	}
