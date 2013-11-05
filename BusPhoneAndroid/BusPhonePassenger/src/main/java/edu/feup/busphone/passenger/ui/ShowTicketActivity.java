@@ -12,6 +12,8 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -33,12 +35,13 @@ public class ShowTicketActivity extends Activity {
 
     public static final String EXTRA_TICKET_TYPE = "ticket_type";
 
-    private ImageView qr_code_image_;
-
     private BluetoothAdapter bluetooth_adapter_;
 
     private Handler bluetooth_handler_;
     private Thread bluetooth_listener_thread_;
+
+    private ImageView qr_code_image_;
+    private LinearLayout status_linear_layout_;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class ShowTicketActivity extends Activity {
         int display_height = display.getHeight();
 
         qr_code_image_  = (ImageView) findViewById(R.id.qr_code_image);
+        status_linear_layout_ = (LinearLayout) findViewById(R.id.status_linear_layout);
 
         int ticket_type = getIntent().getIntExtra(EXTRA_TICKET_TYPE, -1);
         if (ticket_type == -1) {
@@ -81,7 +85,6 @@ public class ShowTicketActivity extends Activity {
         }
 
         bluetooth_handler_ = new Handler();
-        // Bluetooth listener background thread
         bluetooth_listener_thread_ = new Thread(new PassengerBluetoothRunnable(ticket.getId(), bluetooth_handler_));
         bluetooth_listener_thread_.start();
     }
@@ -105,12 +108,6 @@ public class ShowTicketActivity extends Activity {
             try {
                 bluetooth_server_socket_ = bluetooth_adapter_.listenUsingInsecureRfcommWithServiceRecord(BusPhone.Constants.VALIDATE_CHANNEL_NAME, BusPhone.Constants.VALIDATE_CHANNEL_UUID);
 
-                int timeout;
-                int max_timeout;
-                int available;
-
-                byte[] buffer;
-
                 while (running_) {
                     bluetooth_socket_ = bluetooth_server_socket_.accept(TIMEOUT);
 
@@ -119,7 +116,7 @@ public class ShowTicketActivity extends Activity {
                     handler_.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(ShowTicketActivity.this, "Ticket UUID sent.", Toast.LENGTH_SHORT).show();
+                            addStatus("Sending ticket UUID...");
                         }
                     });
 
@@ -128,10 +125,9 @@ public class ShowTicketActivity extends Activity {
                     handler_.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(ShowTicketActivity.this, response, Toast.LENGTH_SHORT).show();
+                            addStatus("Ticket successfully validated.");
                         }
                     });
-
 
                     stop();
                 }
@@ -150,6 +146,12 @@ public class ShowTicketActivity extends Activity {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void addStatus(String message) {
+        TextView status_text = new TextView(ShowTicketActivity.this);
+        status_text.setText(message);
+        status_linear_layout_.addView(status_text);
     }
 
     @Override

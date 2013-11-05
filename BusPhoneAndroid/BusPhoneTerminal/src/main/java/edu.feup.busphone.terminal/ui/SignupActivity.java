@@ -3,13 +3,19 @@ package edu.feup.busphone.terminal.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.HashMap;
+
+import edu.feup.busphone.terminal.client.Bus;
+import edu.feup.busphone.terminal.util.network.TerminalNetworkUtilities;
 import edu.feup.busphone.util.network.WebServiceCallRunnable;
 import edu.feup.busphone.util.text.FormTextWatcher;
 import edu.feup.busphone.util.text.PasswordFontfaceWatcher;
@@ -50,7 +56,35 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
         Thread signup_thread = new Thread(new WebServiceCallRunnable(getWindow().getDecorView().getHandler()) {
             @Override
             public void run() {
+                final String registration_response = TerminalNetworkUtilities.register(bus_id, password);
+                final boolean registration_success = "OK".equals(registration_response);
+                final HashMap<String, String> login_response = registration_success ? TerminalNetworkUtilities.login(bus_id, password) : null;
 
+                handler_.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (registration_success) {
+                            String token = null;
+                            if (login_response.containsKey("token")) {
+                                token = login_response.get("token");
+                            }
+                            Bus.getInstance().authenticate(token);
+
+                            Class<?> cls = token != null ? DecodeTicketActivity.class : LoginActivity.class;
+                            startActivity(new Intent(SignupActivity.this, cls));
+                            finish();
+                        } else {
+                            int message_id;
+                            if ("already in use".equals(registration_response)) {
+                                message_id = R.string.bus_id_already_in_use;
+                            } else {
+                                message_id = R.string.unknown_error;
+                            }
+
+                            Toast.makeText(SignupActivity.this, message_id, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
         signup_thread.start();

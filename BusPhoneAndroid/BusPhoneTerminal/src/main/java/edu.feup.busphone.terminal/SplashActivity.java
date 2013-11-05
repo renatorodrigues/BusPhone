@@ -23,7 +23,7 @@ public class SplashActivity extends Activity {
         boolean registered, logged_in;
         Class<?> cls;
 
-        preferences_ = getSharedPreferences(BusPhone.Constants.INSPECTOR_PREFERENCES, Context.MODE_PRIVATE);
+        preferences_ = getSharedPreferences(BusPhone.Constants.TERMINAL_PREFERENCES, Context.MODE_PRIVATE);
 
         registered = preferences_.getBoolean(BusPhone.Constants.PREF_REGISTERED, false);
         logged_in = preferences_.getBoolean(BusPhone.Constants.PREF_LOGGED_IN, false);

@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class NetworkUtilities {
     private static final String TAG = "NetworkUtilities";
 
-    protected static final String HOST = "172.30.100.242";
+    protected static final String HOST = "172.30.14.217";
     protected static final String SCHEME = "http";
     protected static final int PORT = 3000;
     protected static final String BASE_URL = SCHEME + "://" + HOST;

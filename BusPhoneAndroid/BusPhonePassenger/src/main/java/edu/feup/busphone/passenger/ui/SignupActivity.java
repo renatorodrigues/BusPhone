@@ -117,7 +117,7 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
             public void run() {
                 final String registration_response = PassengerNetworkUtilities.register(name, username, password, card_number);
                 final boolean registration_success = "OK".equals(registration_response);
-                final HashMap<String, String> login_response = registration_success == true ? PassengerNetworkUtilities.login(username, password) : null;
+                final HashMap<String, String> login_response = registration_success ? PassengerNetworkUtilities.login(username, password) : null;
 
                 handler_.post(new Runnable() {
                     @Override
@@ -130,8 +130,7 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
                             Passenger.getInstance().authenticateUser(token);
 
                             Class<?> cls = token != null ? ViewTicketsActivity.class : LoginActivity.class;
-                            Intent intent = new Intent(SignupActivity.this, cls);
-                            startActivity(intent);
+                            startActivity(new Intent(SignupActivity.this, cls));
                             finish();
                         } else {
                             int message_id;

@@ -2,7 +2,6 @@ package edu.feup.busphone.terminal.ui;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -10,9 +9,8 @@ import android.app.Activity;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,13 +21,12 @@ import net.sourceforge.zbar.Symbol;
 import net.sourceforge.zbar.SymbolSet;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 import edu.feup.busphone.BusPhone;
 import edu.feup.busphone.terminal.R;
+import edu.feup.busphone.terminal.client.Bus;
 import edu.feup.busphone.terminal.util.CameraPreview;
+import edu.feup.busphone.terminal.util.network.TerminalNetworkUtilities;
 import edu.feup.busphone.util.bluetooth.BluetoothRunnable;
 
 public class DecodeTicketActivity extends Activity {
@@ -39,17 +36,16 @@ public class DecodeTicketActivity extends Activity {
     private CameraPreview camera_preview_;
     private Handler auto_focus_handler_;
 
-    private TextView scan_text_;
-    private Button scan_button_;
 
-    ImageScanner scanner_;
+    private ImageScanner scanner_;
 
-    private boolean barcode_scanned_ = false;
     private boolean previewing_ = true;
 
     private BluetoothAdapter bluetooth_adapter_;
     private Handler bluetooth_handler_;
     private Thread bluetooth_thread_;
+
+    private LinearLayout status_linear_layout_;
 
     static {
         System.loadLibrary("iconv");
@@ -63,47 +59,43 @@ public class DecodeTicketActivity extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         auto_focus_handler_ = new Handler();
-        camera_ = getCameraInstance();
+        camera_ = Camera.open();
 
         scanner_ = new ImageScanner();
         scanner_.setConfig(0, Config.X_DENSITY, 3);
         scanner_.setConfig(0, Config.Y_DENSITY, 3);
 
-        camera_preview_ = new CameraPreview(this, camera_, preview_callback, auto_focus_callback);
+        camera_preview_ = new CameraPreview(this, camera_, preview_callback_, auto_focus_callback_);
         FrameLayout preview = (FrameLayout) findViewById(R.id.cameraPreview);
         preview.addView(camera_preview_);
 
-        scan_text_ = (TextView) findViewById(R.id.scanText);
-
-        scan_button_ = (Button) findViewById(R.id.ScanButton);
-        scan_button_.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (barcode_scanned_) {
-                    barcode_scanned_ = false;
-                    scan_text_.setText("Scanning...");
-                    camera_.setPreviewCallback(preview_callback);
-                    camera_.startPreview();
-                    previewing_ = true;
-                    camera_.autoFocus(auto_focus_callback);
-                }
-            }
-        });
+        status_linear_layout_ = (LinearLayout) findViewById(R.id.status_linear_layout);
 
         bluetooth_adapter_ = BluetoothAdapter.getDefaultAdapter();
         bluetooth_handler_ = new Handler();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        releaseCamera();
+    public void addStatus(String message) {
+        TextView status_text = new TextView(DecodeTicketActivity.this);
+        status_text.setText(message);
+        status_linear_layout_.addView(status_text);
     }
 
-    public static Camera getCameraInstance() {
-        Camera camera = null;
-        camera = Camera.open();
-        return camera;
+    public void clearStatus() {
+        status_linear_layout_.removeAllViews();
+    }
+
+    private void setPreviewEnabled(boolean enabled) {
+        previewing_ = enabled;
+
+        if (enabled) {
+            camera_.setPreviewCallback(preview_callback_);
+            camera_.startPreview();
+            camera_.autoFocus(auto_focus_callback_);
+        } else {
+            camera_.setPreviewCallback(null);
+            camera_.stopPreview();
+        }
     }
 
     private void releaseCamera() {
@@ -115,16 +107,22 @@ public class DecodeTicketActivity extends Activity {
         }
     }
 
-    private Runnable auto_focus_runnable = new Runnable() {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releaseCamera();
+    }
+
+    private Runnable auto_focus_runnable_ = new Runnable() {
         @Override
         public void run() {
             if (previewing_) {
-                camera_.autoFocus(auto_focus_callback);
+                camera_.autoFocus(auto_focus_callback_);
             }
         }
     };
 
-    Camera.PreviewCallback preview_callback = new Camera.PreviewCallback() {
+    private Camera.PreviewCallback preview_callback_ = new Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
             Camera.Parameters parameters = camera.getParameters();
@@ -136,32 +134,29 @@ public class DecodeTicketActivity extends Activity {
             int result = scanner_.scanImage(barcode);
 
             if (result != 0) {
-                previewing_ = false;
-                camera_.setPreviewCallback(null);
-                camera_.stopPreview();
+                setPreviewEnabled(false);
 
                 SymbolSet symbols = scanner_.getResults();
                 for (Symbol symbol : symbols) {
                     String scan_text = symbol.getData();
-
+                    clearStatus();
                     if (BluetoothAdapter.checkBluetoothAddress(scan_text)) {
-                        scan_text_.setText("MAC address: " + scan_text);
+                        addStatus("MAC address: " + scan_text);
                         bluetooth_thread_ = new Thread(new TerminalBluetoothRunnable(scan_text, bluetooth_handler_));
                         bluetooth_thread_.start();
                     } else {
-                        scan_text_.setText("Invalid input");
+                        addStatus("Invalid input");
+                        setPreviewEnabled(true);
                     }
-                    barcode_scanned_ = true;
-
                 }
             }
         }
     };
 
-    Camera.AutoFocusCallback auto_focus_callback = new Camera.AutoFocusCallback() {
+    private Camera.AutoFocusCallback auto_focus_callback_ = new Camera.AutoFocusCallback() {
         @Override
         public void onAutoFocus(boolean success, Camera camera) {
-            auto_focus_handler_.postDelayed(auto_focus_runnable, 1000);
+            auto_focus_handler_.postDelayed(auto_focus_runnable_, 1000);
         }
     };
 
@@ -188,7 +183,6 @@ public class DecodeTicketActivity extends Activity {
         @Override
         public void run() {
             Log.d(TAG, "BluetoothRunnable started running");
-            String message = "BUSTO!";
 
             try {
                 if (bluetooth_socket_ != null) {
@@ -200,19 +194,27 @@ public class DecodeTicketActivity extends Activity {
                         handler_.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(DecodeTicketActivity.this, ticket_id, Toast.LENGTH_SHORT).show();
+                                addStatus("Validating ticket.");
                             }
                         });
 
-                        send("OK");
+                        final String result = TerminalNetworkUtilities.validate(Bus.getInstance().getAuthToken(), ticket_id);
+                        if ("OK".equals(result)) {
+                            send("ACK");
+                        } else {
+                            send("NACK");
+                        }
+
                         handler_.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(DecodeTicketActivity.this, "Message sent", Toast.LENGTH_SHORT).show();
+                                String status = "OK".equals(result) ? "Successfully validated!" : "Error!";
+                                addStatus(status);
                             }
                         });
 
                         bluetooth_socket_.close();
+                        setPreviewEnabled(true);
                     }
                 }
             } catch (IOException e) {

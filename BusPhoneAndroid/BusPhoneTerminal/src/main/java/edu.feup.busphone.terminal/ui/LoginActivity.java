@@ -9,8 +9,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.HashMap;
 
 import edu.feup.busphone.terminal.R;
+import edu.feup.busphone.terminal.client.Bus;
+import edu.feup.busphone.terminal.util.network.TerminalNetworkUtilities;
 import edu.feup.busphone.util.network.WebServiceCallRunnable;
 import edu.feup.busphone.util.text.FormTextWatcher;
 import edu.feup.busphone.util.text.PasswordFontfaceWatcher;
@@ -48,7 +53,28 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
         Thread login_thread = new Thread(new WebServiceCallRunnable(getWindow().getDecorView().getHandler()) {
             @Override
             public void run() {
+                final HashMap<String, String> response = TerminalNetworkUtilities.login(bus_id, password);
 
+                handler_.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.containsKey("token")) {
+                            Bus.getInstance().authenticate(response.get("token"));
+
+                            startActivity(new Intent(LoginActivity.this, DecodeTicketActivity.class));
+                            finish();
+                        } else {
+                            int message_id;
+                            if ("bad username/password".equals(response.get("info"))) {
+                                message_id = R.string.login_unsuccessful;
+                            } else {
+                                message_id = R.string.unknown_error;
+                            }
+
+                            Toast.makeText(LoginActivity.this, message_id, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
         login_thread.start();
