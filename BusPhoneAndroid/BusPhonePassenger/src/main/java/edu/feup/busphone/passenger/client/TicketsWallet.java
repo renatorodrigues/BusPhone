@@ -38,7 +38,7 @@ public class TicketsWallet {
             return used_;
         }
 
-        public void setUsed_(boolean used) {
+        public void setUsed(boolean used) {
             used_ = used;
         }
 
@@ -75,6 +75,10 @@ public class TicketsWallet {
         for (int i = 0; i < 3; ++i) {
             tickets_collection_.add(new ArrayList<Ticket>());
         }
+    }
+
+    public Ticket getTicket(int type, int index) {
+        return tickets_collection_.get(type).get(index);
     }
 
     public void setTicketsCollection(ArrayList<ArrayList<Ticket>> tickets_collection) {

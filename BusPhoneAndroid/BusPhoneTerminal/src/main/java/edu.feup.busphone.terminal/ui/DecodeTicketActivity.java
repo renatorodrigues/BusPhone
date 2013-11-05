@@ -142,11 +142,17 @@ public class DecodeTicketActivity extends Activity {
 
                 SymbolSet symbols = scanner_.getResults();
                 for (Symbol symbol : symbols) {
-                    String mac_address = symbol.getData();
-                    scan_text_.setText("MAC address: " + mac_address);
+                    String scan_text = symbol.getData();
+
+                    if (BluetoothAdapter.checkBluetoothAddress(scan_text)) {
+                        scan_text_.setText("MAC address: " + scan_text);
+                        bluetooth_thread_ = new Thread(new TerminalBluetoothRunnable(scan_text, bluetooth_handler_));
+                        bluetooth_thread_.start();
+                    } else {
+                        scan_text_.setText("Invalid input");
+                    }
                     barcode_scanned_ = true;
-                    bluetooth_thread_ = new Thread(new TerminalBluetoothRunnable(mac_address, bluetooth_handler_));
-                    bluetooth_thread_.start();
+
                 }
             }
         }
@@ -185,13 +191,20 @@ public class DecodeTicketActivity extends Activity {
             String message = "BUSTO!";
 
             try {
-                byte[] buffer = message.getBytes("UTF-8");
-
                 if (bluetooth_socket_ != null) {
                     bluetooth_socket_.connect();
 
                     if (bluetooth_socket_.isConnected()) {
-                        send(message);
+                        final String ticket_id = receive();
+
+                        handler_.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(DecodeTicketActivity.this, ticket_id, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        send("OK");
                         handler_.post(new Runnable() {
                             @Override
                             public void run() {
@@ -199,17 +212,7 @@ public class DecodeTicketActivity extends Activity {
                             }
                         });
 
-                        final String response = receive();
-
-                        handler_.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(DecodeTicketActivity.this, response, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
                         bluetooth_socket_.close();
-
                     }
                 }
             } catch (IOException e) {
@@ -224,6 +227,5 @@ public class DecodeTicketActivity extends Activity {
         getMenuInflater().inflate(R.menu.decode_ticket, menu);
         return true;
     }
-
 }
 

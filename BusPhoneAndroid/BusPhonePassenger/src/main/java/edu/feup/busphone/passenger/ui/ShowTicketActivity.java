@@ -22,6 +22,8 @@ import java.io.InputStream;
 
 import edu.feup.busphone.BusPhone;
 import edu.feup.busphone.passenger.R;
+import edu.feup.busphone.passenger.client.Passenger;
+import edu.feup.busphone.passenger.client.TicketsWallet;
 import edu.feup.busphone.passenger.util.qrcode.Contents;
 import edu.feup.busphone.passenger.util.qrcode.QRCodeEncoder;
 import edu.feup.busphone.util.bluetooth.BluetoothRunnable;
@@ -57,6 +59,9 @@ public class ShowTicketActivity extends Activity {
             return;
         }
 
+        TicketsWallet.Ticket ticket = Passenger.getInstance().getTicketsWallet().getTicket(ticket_type, 0);
+        Log.d(TAG, "Ticket UUID: " + ticket.getId());
+
         bluetooth_adapter_ = BluetoothAdapter.getDefaultAdapter();
 
         String data = bluetooth_adapter_.getAddress();
@@ -77,7 +82,7 @@ public class ShowTicketActivity extends Activity {
 
         bluetooth_handler_ = new Handler();
         // Bluetooth listener background thread
-        bluetooth_listener_thread_ = new Thread(new PassengerBluetoothRunnable("TICKET-ID", bluetooth_handler_));
+        bluetooth_listener_thread_ = new Thread(new PassengerBluetoothRunnable(ticket.getId(), bluetooth_handler_));
         bluetooth_listener_thread_.start();
     }
 
@@ -86,10 +91,13 @@ public class ShowTicketActivity extends Activity {
 
         private boolean running_ = true;
 
+        private String ticket_id_;
+
         private BluetoothServerSocket bluetooth_server_socket_;
 
         public PassengerBluetoothRunnable(String ticket_id, Handler handler) {
             super(handler);
+            ticket_id_ = ticket_id;
         }
 
         @Override
@@ -106,18 +114,24 @@ public class ShowTicketActivity extends Activity {
                 while (running_) {
                     bluetooth_socket_ = bluetooth_server_socket_.accept(TIMEOUT);
 
-                    timeout = 0;
-                    max_timeout = 32;
-                    available = 0;
-
-                    final String message = receive();
+                    send(ticket_id_);
 
                     handler_.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(ShowTicketActivity.this, message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ShowTicketActivity.this, "Ticket UUID sent.", Toast.LENGTH_SHORT).show();
                         }
                     });
+
+                    final String response = receive();
+
+                    handler_.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ShowTicketActivity.this, response, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
 
                     stop();
                 }
