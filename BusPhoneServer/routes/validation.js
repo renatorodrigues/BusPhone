@@ -67,7 +67,7 @@ exports.inspect = function(req, res){
 
 			if(err!=null){ return util.out(res,3,{err:err.toString()})}
 
-			return util.out(res,0,rows);
+			return util.out(res,0,{tickets:rows});
 		});
 	});	
 };
