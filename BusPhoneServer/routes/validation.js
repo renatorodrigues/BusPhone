@@ -52,7 +52,7 @@ exports.inspect = function(req, res){
 	}
 
 	var query = 
-	"SELECT * FROM tickets WHERE busID_FK=$bus_id AND " +
+	"SELECT ticketID AS id,type,used,time as timestamp FROM tickets WHERE busID_FK=$bus_id AND " +
 	"time >= Datetime('now','localtime', '-90 Minute')";
 
 	/*
