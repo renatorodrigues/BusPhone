@@ -4,8 +4,8 @@ var auth = require("./auth");
 exports.validate = function(req, res){
 
 	var db = req.db;
-	var token = req.query.token,
-		ticket_id = req.query.id;
+	var token = req.body.token,
+		ticket_id = req.body.id;
 
 	if(token==null || ticket_id==null || token=="" || ticket_id==""){
 		return util.out(res,2);
