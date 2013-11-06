@@ -38,3 +38,16 @@ exports.tickets = function(req, res){
 		 
 	});
 };
+
+exports.clear = function(req, res){
+
+	var db = req.db;
+
+	db.serialize(function() {
+
+		db.all("DELETE FROM tickets", function(err, rows) {
+	       res.send("ok");
+	  	});
+		 
+	});
+};
