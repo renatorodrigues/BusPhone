@@ -63,11 +63,16 @@ exports.inspect = function(req, res){
 	*/
 
 	db.serialize(function() {
-		var q = db.all(query, {$bus_id:1},function(err,rows){
+		var q = db.get(query, {$bus_id:1},function(err,rows){
 
 			if(err!=null){ return util.out(res,3,{err:err.toString()})}
 
-			return util.out(res,0,{tickets:rows});
+			if (typeof(rows) != 'undefined')
+					return util.out(res,0,{tickets:rows});
+				else
+					return util.out(res, 5);
+
+			
 		});
 	});	
 };
