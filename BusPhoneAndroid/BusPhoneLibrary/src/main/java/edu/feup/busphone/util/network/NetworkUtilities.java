@@ -20,6 +20,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
@@ -30,10 +31,13 @@ import java.util.ArrayList;
 public class NetworkUtilities {
     private static final String TAG = "NetworkUtilities";
 
-    protected static final String HOST = "172.30.44.98";
+    protected static final String HOST = "172.30.53.71";
     protected static final String SCHEME = "http";
     protected static final int PORT = 3000;
     protected static final String BASE_URL = SCHEME + "://" + HOST;
+
+    protected static final int TIMEOUT_CONNECTION = 3000;
+    protected static final int TIMEOUT_SOCKET = 5000;
 
     private static HttpClient http_client_;
     private static HttpHost http_host_;
@@ -55,6 +59,10 @@ public class NetworkUtilities {
             http_client_ = new DefaultHttpClient();
             ClientConnectionManager manager = http_client_.getConnectionManager();
             HttpParams params = http_client_.getParams();
+
+            HttpConnectionParams.setConnectionTimeout(params, TIMEOUT_CONNECTION);
+            HttpConnectionParams.setSoTimeout(params, TIMEOUT_SOCKET);
+
             http_client_ = new DefaultHttpClient(new ThreadSafeClientConnManager(params, manager.getSchemeRegistry()), params);
         }
     }

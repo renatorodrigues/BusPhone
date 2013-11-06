@@ -61,6 +61,12 @@ public class PassengerNetworkUtilities extends NetworkUtilities {
         String uri = BASE_URL + "/tickets" + "?token=" + token;
         JSONObject response = get(uri);
 
+        try {
+            Log.d(TAG, response.toString(2));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         return TicketsWallet.valueOf(response);
     }
 

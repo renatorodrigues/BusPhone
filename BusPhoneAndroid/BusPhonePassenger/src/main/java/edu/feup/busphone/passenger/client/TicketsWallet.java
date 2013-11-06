@@ -3,9 +3,13 @@ package edu.feup.busphone.passenger.client;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 
+import edu.feup.busphone.BusPhone;
 import edu.feup.busphone.client.Ticket;
+import edu.feup.busphone.util.network.NetworkUtilities;
 
 public class TicketsWallet {
     private Ticket validated_ = null;
@@ -28,6 +32,10 @@ public class TicketsWallet {
         validated_ = ticket;
     }
 
+    public boolean hasValidated() {
+        return validated_ != null;
+    }
+
     public Ticket getTicket(int type, int index) {
         return tickets_collection_.get(type).get(index);
     }
@@ -36,8 +44,38 @@ public class TicketsWallet {
         tickets_collection_ = tickets_collection;
     }
 
+    public void setValidatedTicket(Ticket ticket) {
+        validated_ = ticket;
+    }
+
+    public static boolean isValid(Ticket t) {
+        Timestamp timestamp = Timestamp.valueOf(t.getTimestamp());
+        Calendar validation = Calendar.getInstance();
+        validation.setTimeInMillis(timestamp.getTime());
+        int ticket_duration;
+        switch (t.getType()) {
+            case Ticket.T1:
+                ticket_duration = BusPhone.Constants.T1_DURATION;
+                break;
+            case Ticket.T2:
+                ticket_duration = BusPhone.Constants.T2_DURATION;
+                break;
+            case Ticket.T3:
+                ticket_duration = BusPhone.Constants.T3_DURATION;
+                break;
+            default:
+                return false;
+        }
+
+        validation.add(Calendar.SECOND, ticket_duration);
+
+        Calendar now = Calendar.getInstance();
+
+        return now.getTime().getTime() < validation.getTime().getTime();
+    }
+
     public static TicketsWallet valueOf(JSONObject tickets) {
-        if (!"OK".equals(tickets.optString("info"))) {
+        if (tickets.optInt("status") != NetworkUtilities.Status.OK) {
             return null;
         }
 
@@ -57,6 +95,14 @@ public class TicketsWallet {
             }
 
             wallet.setTicketsCollection(tickets_collection);
+        }
+
+        JSONObject last_validated = tickets.optJSONObject("current");
+        if (last_validated != null) {
+            Ticket validated = Ticket.valueOf(last_validated);
+            if (isValid(validated)) {
+                wallet.setValidatedTicket(Ticket.valueOf(last_validated));
+            }
         }
 
         return wallet;

@@ -201,27 +201,6 @@ public class ShowTicketActivity extends Activity {
             case android.R.id.home:
                 onBackPressed();
                 break;
-            case R.id.action_manual_validation:
-                validated_ = true;
-                Thread manual_override = new Thread(new WebServiceCallRunnable(new Handler()) {
-                    @Override
-                    public void run() {
-                        Ticket ticket = Passenger.getInstance().getTicketsWallet().getTicket(ticket_type_, 0);
-                        String bus_token = "84077d9a-3a8e-449e-aa0a-949539cb28f5";
-                        String ticket_id = ticket.getId();
-                        Log.d(TAG, "type: " + ticket_type_ + " token: " + bus_token + " id: " + ticket_id);
-                        final String response = PassengerNetworkUtilities.validate(bus_token, ticket_id);
-                        handler_.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                returnToParentActivity("OK".equals(response));
-                                Log.d(TAG, "RESULTADO DO VALIDATE: " + response);
-                            }
-                        });
-                    }
-                });
-                manual_override.start();
-                break;
             default:
                 return super.onOptionsItemSelected(item);
         }

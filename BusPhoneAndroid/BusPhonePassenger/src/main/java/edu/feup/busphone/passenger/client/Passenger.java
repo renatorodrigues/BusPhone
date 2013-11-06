@@ -77,10 +77,9 @@ public class Passenger {
 
     }
 
-    public void loadLocalTicketsWallet() {
+    public void loadCachedData() {
         Context context = BusPhone.getContext();
         SharedPreferences preferences = context.getSharedPreferences(BusPhone.Constants.PASSENGER_PREFERENCES, Context.MODE_PRIVATE);
-
 
     }
 }

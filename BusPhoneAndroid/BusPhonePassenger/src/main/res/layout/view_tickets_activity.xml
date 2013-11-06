@@ -28,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/validated_ticket_wrapper"
+        android:visibility="invisible"
         android:text="Validated Ticket"
         style="@style/SectionHeader" />
 
@@ -36,6 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:visibility="invisible"
         android:layout_above="@+id/available_tickets_text"
         android:onClick="showValidatedTicket">
 

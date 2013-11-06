@@ -2,6 +2,7 @@ package edu.feup.busphone.inspector.ui;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -117,6 +118,9 @@ public class InspectionActivity extends CameraActivity implements ValidationResu
                         } else {
                             bus_id_ = bus_id;
                             tickets_ = tickets;
+
+                            Log.d(TAG, "tickets size: " + tickets.size());
+
                             setCaptureMode(TICKET_VALIDATION_MODE);
                             setPreviewEnabled(true);
                         }
@@ -142,6 +146,8 @@ public class InspectionActivity extends CameraActivity implements ValidationResu
         if (ticket != null) {
             int type = ticket.getType();
             String timestamp = ticket.getTimestamp();
+
+            valid = true;
             
         }
 
