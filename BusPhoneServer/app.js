@@ -47,6 +47,7 @@ app.post("/bus_register", attachDB, auth.bus_register);
 app.get("/admin/users", attachDB, admin.users);
 app.get("/admin/bus", attachDB, admin.bus);
 app.get("/admin/tickets", attachDB, admin.tickets);
+app.get("/admin/clear", attachDB, admin.clear);
 
 app.get("/info", attachDB, info.info);
 app.get("/tickets", attachDB, info.tickets);
