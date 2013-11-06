@@ -44,7 +44,7 @@ exports.validate = function(req, res){
 exports.inspect = function(req, res){
 
 	var db = req.db;
-	var bus_id = req.query.bus;/*,
+	var bus_id = req.query.id;/*,
 		ticket_id = req.query.ticket;*/
 
 	if(bus_id==null ||/* ticket_id==null ||*/ bus_id=="" /*|| ticket_id==""*/){

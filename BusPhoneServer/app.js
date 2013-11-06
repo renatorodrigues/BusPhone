@@ -53,7 +53,7 @@ app.get("/tickets", attachDB, info.tickets);
 
 app.post("/buy", attachDB, store.buy);
 app.post("/validate", attachDB, validation.validate);
-app.post("/inspect", attachDB, validation.inspect);
+app.get("/inspect", attachDB, validation.inspect);
 
 //app.get('/register', auth.register);
 
