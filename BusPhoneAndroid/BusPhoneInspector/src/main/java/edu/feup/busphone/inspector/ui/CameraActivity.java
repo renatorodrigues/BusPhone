@@ -74,8 +74,10 @@ public class CameraActivity extends Activity {
 
     private void releaseCameraAndPreview() {
         previewing_ = false;
-        camera_.setPreviewCallback(null);
-        camera_.release();
+        if (camera_ != null) {
+            camera_.setPreviewCallback(null);
+            camera_.release();
+        }
         camera_ = null;
     }
 

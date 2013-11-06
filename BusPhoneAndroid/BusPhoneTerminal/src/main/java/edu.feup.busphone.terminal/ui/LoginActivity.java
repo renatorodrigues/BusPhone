@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,6 +70,8 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
                         progress_dialog_fragment_.dismiss();
 
                         if (response.containsKey("token")) {
+                            Log.d(TAG, "BUS ID: " + bus_id);
+                            Log.d(TAG, "BUS TOKEN: " + response.get("token"));
                             Bus.getInstance().authenticate(response.get("token"), bus_id);
 
                             startActivity(new Intent(LoginActivity.this, DecodeTicketActivity.class));

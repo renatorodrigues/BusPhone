@@ -105,4 +105,18 @@ public class PassengerNetworkUtilities extends NetworkUtilities {
 
         return sanitized_response;
     }
+
+
+    // TODO: REMOVE THIS
+    public static String validate(String token, String ticket_id) {
+        String uri = BASE_URL + "/validate";
+
+        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("token", token));
+        params.add(new BasicNameValuePair("id", ticket_id));
+
+        JSONObject response = post(uri, params);
+
+        return response.optString("info");
+    }
 }

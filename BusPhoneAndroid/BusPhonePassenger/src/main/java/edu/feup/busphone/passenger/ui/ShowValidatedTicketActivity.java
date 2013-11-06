@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
+import edu.feup.busphone.client.Ticket;
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.client.TicketsWallet;
@@ -37,7 +38,7 @@ public class ShowValidatedTicketActivity extends Activity {
 
         qr_code_image_ = (ImageView) findViewById(R.id.qr_code_image);
 
-        TicketsWallet.Ticket validated_ticket = Passenger.getInstance().getTicketsWallet().getValidated();
+        Ticket validated_ticket = Passenger.getInstance().getTicketsWallet().getValidated();
         if (validated_ticket == null) {
             Toast.makeText(ShowValidatedTicketActivity.this, "No validated ticket to show", Toast.LENGTH_SHORT).show();
             finish();

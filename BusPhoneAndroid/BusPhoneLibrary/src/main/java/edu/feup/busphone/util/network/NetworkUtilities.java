@@ -38,6 +38,18 @@ public class NetworkUtilities {
     private static HttpClient http_client_;
     private static HttpHost http_host_;
 
+    public static final class Status {
+        public static final int OK = 0;
+        public static final int BAD_USERNAME_OR_PASSWORD = 1;
+        public static final int BAD_PARAMETERS = 2;
+        public static final int ERROR = 3;
+        public static final int ALREADY_IN_USE = 4;
+        public static final int INVALID_TOKEN = 5;
+        public static final int TOKEN_EXPIRED = 6;
+        public static final int EXCESS_TICKETS = 7;
+        public static final int TICKET_USED = 8;
+    }
+
     private static void maybeCreateHttpClient() {
         if (http_client_ == null) {
             http_client_ = new DefaultHttpClient();

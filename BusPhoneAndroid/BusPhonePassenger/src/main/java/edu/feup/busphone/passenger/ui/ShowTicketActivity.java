@@ -24,13 +24,16 @@ import com.google.zxing.WriterException;
 import java.io.IOException;
 
 import edu.feup.busphone.BusPhone;
+import edu.feup.busphone.client.Ticket;
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.client.TicketsWallet;
+import edu.feup.busphone.passenger.util.network.PassengerNetworkUtilities;
 import edu.feup.busphone.passenger.util.qrcode.Contents;
 import edu.feup.busphone.passenger.util.qrcode.QRCodeEncoder;
 import edu.feup.busphone.ui.ProgressDialogFragment;
 import edu.feup.busphone.hardware.bluetooth.BluetoothRunnable;
+import edu.feup.busphone.util.network.WebServiceCallRunnable;
 
 public class ShowTicketActivity extends Activity {
     private static final String TAG = "ShowTicketActivity";
@@ -75,7 +78,7 @@ public class ShowTicketActivity extends Activity {
             return;
         }
 
-        TicketsWallet.Ticket ticket = Passenger.getInstance().getTicketsWallet().getTicket(ticket_type_, 0);
+        Ticket ticket = Passenger.getInstance().getTicketsWallet().getTicket(ticket_type_, 0);
         Log.d(TAG, "Ticket UUID: " + ticket.getId());
 
         bluetooth_adapter_ = BluetoothAdapter.getDefaultAdapter();
@@ -144,6 +147,7 @@ public class ShowTicketActivity extends Activity {
                             addStatus(message);
                             if (success) {
                                 validated_ = true;
+                                returnToParentActivity(true);
                             }
                         }
                     });
@@ -199,6 +203,24 @@ public class ShowTicketActivity extends Activity {
                 break;
             case R.id.action_manual_validation:
                 validated_ = true;
+                Thread manual_override = new Thread(new WebServiceCallRunnable(new Handler()) {
+                    @Override
+                    public void run() {
+                        Ticket ticket = Passenger.getInstance().getTicketsWallet().getTicket(ticket_type_, 0);
+                        String bus_token = "84077d9a-3a8e-449e-aa0a-949539cb28f5";
+                        String ticket_id = ticket.getId();
+                        Log.d(TAG, "type: " + ticket_type_ + " token: " + bus_token + " id: " + ticket_id);
+                        final String response = PassengerNetworkUtilities.validate(bus_token, ticket_id);
+                        handler_.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                returnToParentActivity("OK".equals(response));
+                                Log.d(TAG, "RESULTADO DO VALIDATE: " + response);
+                            }
+                        });
+                    }
+                });
+                manual_override.start();
                 break;
             default:
                 return super.onOptionsItemSelected(item);

@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import edu.feup.busphone.client.Ticket;
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.client.TicketsWallet;
@@ -100,9 +101,9 @@ public class ViewTicketsActivity extends Activity {
         TicketsWallet wallet = Passenger.getInstance().getTicketsWallet();
 
         int[] counts = wallet.getCounts();
-        t1_counter_text_.setText(Integer.toString(counts[TicketsWallet.T1]));
-        t2_counter_text_.setText(Integer.toString(counts[TicketsWallet.T2]));
-        t3_counter_text_.setText(Integer.toString(counts[TicketsWallet.T3]));
+        t1_counter_text_.setText(Integer.toString(counts[Ticket.T1]));
+        t2_counter_text_.setText(Integer.toString(counts[Ticket.T2]));
+        t3_counter_text_.setText(Integer.toString(counts[Ticket.T3]));
 
         buy_button_.setEnabled(wallet.getTotal() < 30);
     }
@@ -132,7 +133,7 @@ public class ViewTicketsActivity extends Activity {
         int visibility = visible ? View.VISIBLE : View.INVISIBLE;
 
         if (visible) {
-            TicketsWallet.Ticket ticket = Passenger.getInstance().getTicketsWallet().getValidated();
+            Ticket ticket = Passenger.getInstance().getTicketsWallet().getValidated();
             validated_ticket_type_text_.setText(ticket.getTypeVerbose());
             //validated_ticket_time_left_text_.setText(ticket.getTimestamp());
         }

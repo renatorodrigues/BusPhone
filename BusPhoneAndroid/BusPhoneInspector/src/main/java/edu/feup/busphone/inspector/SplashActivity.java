@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
-import edu.feup.busphone.inspector.ui.AuthenticationActivity;
+import edu.feup.busphone.inspector.ui.InspectionActivity;
 
 public class SplashActivity extends Activity {
 
@@ -12,7 +12,7 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
 
-        startActivity(new Intent(SplashActivity.this, AuthenticationActivity.class));
+        startActivity(new Intent(SplashActivity.this, InspectionActivity.class));
         finish();
     }
 }

@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 
+import edu.feup.busphone.client.Ticket;
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.client.TicketsWallet;
@@ -52,9 +53,9 @@ public class BuyTicketsActivity extends Activity {
         int[] passenger_tickets_count = Passenger.getInstance().getTicketsWallet().getCounts();
 
         max_tickets_ = new int[] {
-                MAX_TICKETS_PER_TYPE - passenger_tickets_count[TicketsWallet.T1],
-                MAX_TICKETS_PER_TYPE - passenger_tickets_count[TicketsWallet.T2],
-                MAX_TICKETS_PER_TYPE - passenger_tickets_count[TicketsWallet.T3]
+                MAX_TICKETS_PER_TYPE - passenger_tickets_count[Ticket.T1],
+                MAX_TICKETS_PER_TYPE - passenger_tickets_count[Ticket.T2],
+                MAX_TICKETS_PER_TYPE - passenger_tickets_count[Ticket.T3]
         };
 
         ActionBar action_bar = getActionBar();

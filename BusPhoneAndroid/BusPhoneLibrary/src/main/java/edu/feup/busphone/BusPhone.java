@@ -35,5 +35,10 @@ public class BusPhone extends Application {
         public static final String VALIDATE_CHANNEL_NAME = "validate_channel";
         public static final UUID VALIDATE_CHANNEL_UUID = UUID.fromString("575a64f6-f514-4b4d-99d3-f3b57d38f5e2");
 
+        // Tickets durations (seconds)
+        public static final int T1_DURATION = 900;
+        public static final int T2_DURATION = 1800;
+        public static final int T3_DURATION = 3600;
+
     }
 }
