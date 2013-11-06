@@ -22,7 +22,7 @@
             android:label="@string/title_activity_signup" >
         </activity>
         <activity
-            android:name=".ui.LoginActivity"
+            android:name="edu.feup.busphone.passenger.ui.LoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
         <activity
@@ -31,13 +31,13 @@
         </activity>
         <activity
             android:name="edu.feup.busphone.passenger.ui.BuyTicketsActivity"
-            android:parentActivityName="edu.feup.busphone.passenger.ui.ViewTicketsActivity"
-            android:label="@string/buy_tickets" >
+            android:label="@string/buy_tickets"
+            android:parentActivityName="edu.feup.busphone.passenger.ui.ViewTicketsActivity" >
         </activity>
         <activity
             android:name="edu.feup.busphone.passenger.ui.ShowTicketActivity"
-            android:parentActivityName="edu.feup.busphone.passenger.ui.ViewTicketsActivity"
-            android:label="@string/title_activity_show_ticket" >
+            android:label="@string/title_activity_show_ticket"
+            android:parentActivityName="edu.feup.busphone.passenger.ui.ViewTicketsActivity" >
         </activity>
         <activity
             android:name="edu.feup.busphone.passenger.SplashActivity"
@@ -48,6 +48,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="edu.feup.busphone.passenger.ui.ShowValidatedTicketActivity"
+            android:label="@string/title_activity_show_validated_ticket"
+            android:parentActivityName="edu.feup.busphone.passenger.ui.ViewTicketsActivity" >
         </activity>
     </application>
 

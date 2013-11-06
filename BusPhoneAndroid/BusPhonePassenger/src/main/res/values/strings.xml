@@ -9,21 +9,17 @@
     <string name="title_activity_buy_tickets">Buy Tickets</string>
     <string name="title_activity_show_ticket">Ticket</string>
     <string name="title_activity_splash">BusPhone Passenger</string>
-
     <string name="month">Month</string>
     <string name="year">Year</string>
-
     <string name="username_already_in_use">Username is already in use.</string>
     <string name="login_unsuccessful">Check your username and password and try again.</string>
     <string name="unknown_error">An unknown error has occurred. Try again.</string>
     <string name="buy_tickets">Buy Tickets</string>
-
-    <string name="euro">&#8364;</string>
+    <string name="euro">€</string>
     <string name="log_out">Log out</string>
     <string name="log_in">Log in</string>
     <string name="fill_form">Fill form</string>
     <string name="sign_up">Sign up</string>
-
     <string name="none">None</string>
     <string name="extra_ticket">Extra Ticket:</string>
     <string name="need_ticket">No tickets to validate.</string>
@@ -42,5 +38,8 @@
         <item>November</item>
         <item>December</item>
     </string-array>
+
+    <string name="title_activity_show_validated_ticket">Validated Ticket</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

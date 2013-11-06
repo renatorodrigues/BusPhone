@@ -2,18 +2,15 @@
 <resources>
 
     <string name="app_name">BusPhone Terminal</string>
-
-
     <string name="action_settings">Settings</string>
-
     <string name="title_activity_splash">@string/app_name</string>
     <string name="title_activity_signup">Signup</string>
     <string name="title_activity_login">Login</string>
     <string name="title_activity_decode_ticket">Decode Ticket</string>
-
     <string name="unknown_error">An unknown error has occurred. Try again.</string>
-
     <string name="bus_id_already_in_use">Bus ID is already in use.</string>
     <string name="login_unsuccessful">Check your bus ID and password and try again.</string>
+    <string name="title_activity_identification">Bus ID</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

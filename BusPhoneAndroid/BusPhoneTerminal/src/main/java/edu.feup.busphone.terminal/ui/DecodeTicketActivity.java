@@ -3,12 +3,14 @@ package edu.feup.busphone.terminal.ui;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -180,6 +182,12 @@ public class DecodeTicketActivity extends Activity {
         releaseCamera();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        releaseCameraAndPreview();
+    }
+
     public void addStatus(String message) {
         TextView status_text = new TextView(DecodeTicketActivity.this);
         status_text.setTextColor(getResources().getColor(android.R.color.white));
@@ -272,6 +280,24 @@ public class DecodeTicketActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.decode_ticket, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_bus_id:
+                startActivity(new Intent(DecodeTicketActivity.this, IdentificationActivity.class));
+                break;
+            case R.id.action_logout:
+                Bus.getInstance().removeCredentials();
+                startActivity(new Intent(DecodeTicketActivity.this, LoginActivity.class));
+                finish();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
         return true;
     }
 }

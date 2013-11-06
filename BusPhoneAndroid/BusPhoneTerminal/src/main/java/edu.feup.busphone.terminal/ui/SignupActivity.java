@@ -16,6 +16,7 @@ import java.util.HashMap;
 
 import edu.feup.busphone.terminal.client.Bus;
 import edu.feup.busphone.terminal.util.network.TerminalNetworkUtilities;
+import edu.feup.busphone.ui.ProgressDialogFragment;
 import edu.feup.busphone.util.network.WebServiceCallRunnable;
 import edu.feup.busphone.util.text.FormTextWatcher;
 import edu.feup.busphone.util.text.PasswordFontfaceWatcher;
@@ -32,6 +33,8 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
 
     private Button signup_button_;
 
+    private ProgressDialogFragment progress_dialog_fragment_;
+
     @Override
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
@@ -46,12 +49,16 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
 
         PasswordFontfaceWatcher.register(password_edit_);
         FormTextWatcher.register(required_fields_, this);
+
+        progress_dialog_fragment_ = ProgressDialogFragment.newInstance(null, false);
     }
 
 
     public void signup(View v) {
         final String bus_id = bus_id_edit_.getText().toString();
         final String password = password_edit_.getText().toString();
+
+        progress_dialog_fragment_.show(getFragmentManager(), "signup_progress");
 
         Thread signup_thread = new Thread(new WebServiceCallRunnable(getWindow().getDecorView().getHandler()) {
             @Override
@@ -63,12 +70,14 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
                 handler_.post(new Runnable() {
                     @Override
                     public void run() {
+                        progress_dialog_fragment_.dismiss();
+
                         if (registration_success) {
                             String token = null;
                             if (login_response.containsKey("token")) {
                                 token = login_response.get("token");
                             }
-                            Bus.getInstance().authenticate(token);
+                            Bus.getInstance().authenticate(token, bus_id);
 
                             Class<?> cls = token != null ? DecodeTicketActivity.class : LoginActivity.class;
                             startActivity(new Intent(SignupActivity.this, cls));

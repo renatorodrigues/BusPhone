@@ -23,7 +23,21 @@ public class Bus {
         id_ = "";
     }
 
-    public void authenticate(String token) {
+    public String getId() {
+        if (id_ == null || "".equals(id_)) {
+            Context context = BusPhone.getContext();
+            SharedPreferences preferences = context.getSharedPreferences(BusPhone.Constants.TERMINAL_PREFERENCES, Context.MODE_PRIVATE);
+            id_ = preferences.getString(BusPhone.Constants.PREF_BUS_ID, null);
+        }
+
+        return id_;
+    }
+
+    public void setId(String id) {
+        id_ = id;
+    }
+
+    public void authenticate(String token, String bus_id) {
         Context context = BusPhone.getContext();
         SharedPreferences.Editor preferences_editor = context.getSharedPreferences(BusPhone.Constants.TERMINAL_PREFERENCES, Context.MODE_PRIVATE).edit();
         preferences_editor.putBoolean(BusPhone.Constants.PREF_REGISTERED, true);
@@ -32,7 +46,10 @@ public class Bus {
             preferences_editor.putBoolean(BusPhone.Constants.PREF_LOGGED_IN, true);
             preferences_editor.putString(BusPhone.Constants.PREF_AUTH_TOKEN, token);
 
+            preferences_editor.putString(BusPhone.Constants.PREF_BUS_ID, bus_id);
+
             auth_token_ = token;
+            id_ = bus_id;
         }
 
         preferences_editor.commit();

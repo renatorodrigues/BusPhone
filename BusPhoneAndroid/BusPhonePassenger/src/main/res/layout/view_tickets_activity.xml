@@ -36,7 +36,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_above="@+id/available_tickets_text">
+        android:layout_above="@+id/available_tickets_text"
+        android:onClick="showValidatedTicket">
 
         <TextView
             android:id="@+id/validated_ticket_type_text"

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.util.network.PassengerNetworkUtilities;
+import edu.feup.busphone.ui.ProgressDialogFragment;
 import edu.feup.busphone.util.text.FormTextWatcher;
 import edu.feup.busphone.util.text.PasswordFontfaceWatcher;
 import edu.feup.busphone.util.network.WebServiceCallRunnable;
@@ -29,6 +30,8 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
     private TextView[] required_fields_;
 
     private Button login_button_;
+
+    private ProgressDialogFragment progress_dialog_fragment_;
 
     @Override
     protected void onCreate(Bundle saved_instance_state) {
@@ -44,11 +47,15 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
 
         PasswordFontfaceWatcher.register(password_edit_);
         FormTextWatcher.register(required_fields_, this);
+
+        progress_dialog_fragment_ = ProgressDialogFragment.newInstance(null, false);
     }
 
     public void login(View v) {
         final String username = username_edit_.getText().toString();
         final String password = password_edit_.getText().toString();
+
+        progress_dialog_fragment_.show(getFragmentManager(), "login_progress");
 
         Thread login_thread = new Thread(new WebServiceCallRunnable(getWindow().getDecorView().getHandler()) {
             @Override
@@ -58,6 +65,7 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
                 handler_.post(new Runnable() {
                     @Override
                     public void run() {
+                        progress_dialog_fragment_.dismiss();
                         if (response.containsKey("token")) {
                             Passenger.getInstance().authenticateUser(response.get("token"));
 

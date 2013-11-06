@@ -1,5 +1,6 @@
 package edu.feup.busphone.terminal.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import edu.feup.busphone.terminal.R;
 import edu.feup.busphone.terminal.client.Bus;
 import edu.feup.busphone.terminal.util.network.TerminalNetworkUtilities;
+import edu.feup.busphone.ui.ProgressDialogFragment;
 import edu.feup.busphone.util.network.WebServiceCallRunnable;
 import edu.feup.busphone.util.text.FormTextWatcher;
 import edu.feup.busphone.util.text.PasswordFontfaceWatcher;
@@ -29,6 +31,8 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
     private TextView[] required_fields_;
 
     private Button login_button_;
+
+    private ProgressDialogFragment progress_dialog_fragment_;
 
     @Override
     protected void onCreate(Bundle saved_instance_state) {
@@ -44,11 +48,15 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
 
         PasswordFontfaceWatcher.register(password_edit_);
         FormTextWatcher.register(required_fields_, this);
+
+        progress_dialog_fragment_ = ProgressDialogFragment.newInstance(null, false);
     }
 
     public void login(View v) {
         final String bus_id = bus_id_edit_.getText().toString();
         final String password = password_edit_.getText().toString();
+
+        progress_dialog_fragment_.show(getFragmentManager(), "login_progress");
 
         Thread login_thread = new Thread(new WebServiceCallRunnable(getWindow().getDecorView().getHandler()) {
             @Override
@@ -58,8 +66,10 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
                 handler_.post(new Runnable() {
                     @Override
                     public void run() {
+                        progress_dialog_fragment_.dismiss();
+
                         if (response.containsKey("token")) {
-                            Bus.getInstance().authenticate(response.get("token"));
+                            Bus.getInstance().authenticate(response.get("token"), bus_id);
 
                             startActivity(new Intent(LoginActivity.this, DecodeTicketActivity.class));
                             finish();

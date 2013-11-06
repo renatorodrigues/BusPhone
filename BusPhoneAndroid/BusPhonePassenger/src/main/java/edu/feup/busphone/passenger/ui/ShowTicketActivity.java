@@ -2,13 +2,16 @@ package edu.feup.busphone.passenger.ui;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,9 +37,12 @@ public class ShowTicketActivity extends Activity {
 
     public static final String EXTRA_TICKET_TYPE = "ticket_type";
 
+    public static final String EXTRA_VALIDATED_TICKET = "validated_ticket";
+
     private BluetoothAdapter bluetooth_adapter_;
 
     private Handler bluetooth_handler_;
+    private PassengerBluetoothRunnable passenger_bluetooth_runnable_;
     private Thread bluetooth_listener_thread_;
 
     private ImageView qr_code_image_;
@@ -44,27 +50,32 @@ public class ShowTicketActivity extends Activity {
 
     private ProgressDialogFragment progress_dialog_fragment_;
 
+    private int ticket_type_;
+    private boolean validated_ = false;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle saved_instance_state) {
+        super.onCreate(saved_instance_state);
         setContentView(R.layout.show_ticket_activity);
 
         WindowManager window_manager = (WindowManager) getSystemService(WINDOW_SERVICE);
         Display display = window_manager.getDefaultDisplay();
-        int display_width = display.getWidth();
-        int display_height = display.getHeight();
+        Point size = new Point();
+        display.getSize(size);
+        int display_width = size.x;
+        int display_height = size.y;
 
         qr_code_image_  = (ImageView) findViewById(R.id.qr_code_image);
         status_linear_layout_ = (LinearLayout) findViewById(R.id.status_linear_layout);
 
-        int ticket_type = getIntent().getIntExtra(EXTRA_TICKET_TYPE, -1);
-        if (ticket_type == -1) {
+        ticket_type_ = getIntent().getIntExtra(EXTRA_TICKET_TYPE, -1);
+        if (ticket_type_ == -1) {
             Toast.makeText(this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        TicketsWallet.Ticket ticket = Passenger.getInstance().getTicketsWallet().getTicket(ticket_type, 0);
+        TicketsWallet.Ticket ticket = Passenger.getInstance().getTicketsWallet().getTicket(ticket_type_, 0);
         Log.d(TAG, "Ticket UUID: " + ticket.getId());
 
         bluetooth_adapter_ = BluetoothAdapter.getDefaultAdapter();
@@ -86,7 +97,8 @@ public class ShowTicketActivity extends Activity {
         }
 
         bluetooth_handler_ = new Handler();
-        bluetooth_listener_thread_ = new Thread(new PassengerBluetoothRunnable(ticket.getId(), bluetooth_handler_));
+        passenger_bluetooth_runnable_ = new PassengerBluetoothRunnable(ticket.getId(), bluetooth_handler_);
+        bluetooth_listener_thread_ = new Thread(passenger_bluetooth_runnable_);
         bluetooth_listener_thread_.start();
     }
 
@@ -123,12 +135,16 @@ public class ShowTicketActivity extends Activity {
                     });
 
                     final String response = receive();
-                    final String message = "ACK".equals(response) ? "Ticket successfully validated." : "Invalid ticket.";
+                    final boolean success = "ACK".equals(response);
+                    final String message = success ? "Ticket successfully validated." : "Invalid ticket.";
                     handler_.post(new Runnable() {
                         @Override
                         public void run() {
                             progress_dialog_fragment_.dismiss();
                             addStatus(message);
+                            if (success) {
+                                validated_ = true;
+                            }
                         }
                     });
 
@@ -143,12 +159,24 @@ public class ShowTicketActivity extends Activity {
             running_ = false;
 
             try {
-                bluetooth_socket_.close();
-                bluetooth_server_socket_.close();
+                if (bluetooth_socket_ != null) {
+                    bluetooth_socket_.close();
+                }
+
+                if (bluetooth_server_socket_ != null) {
+                    bluetooth_server_socket_.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        passenger_bluetooth_runnable_.stop();
+        bluetooth_listener_thread_.interrupt();
+        super.onDestroy();
     }
 
     public void addStatus(String message) {
@@ -163,4 +191,38 @@ public class ShowTicketActivity extends Activity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            case R.id.action_manual_validation:
+                validated_ = true;
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        return true;
+    }
+
+    public void returnToParentActivity(boolean validate_ticket) {
+        Intent return_intent = new Intent();
+        return_intent.putExtra(EXTRA_VALIDATED_TICKET, validate_ticket);
+        if (validate_ticket) {
+            return_intent.putExtra(EXTRA_TICKET_TYPE, ticket_type_);
+        }
+        setResult(RESULT_OK, return_intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (validated_) {
+            returnToParentActivity(true);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

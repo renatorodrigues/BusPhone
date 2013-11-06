@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,7 @@ public class ViewTicketsActivity extends Activity {
     private static final String TAG = "ViewTicketsActivity";
 
     public static final int BUY_TICKETS_REQUEST = 1;
+    public static final int USE_TICKET_REQUEST = 2;
 
     private ArrayAdapter<String> adapter_;
 
@@ -129,8 +131,15 @@ public class ViewTicketsActivity extends Activity {
     public void setValidatedTicketVisible(boolean visible) {
         int visibility = visible ? View.VISIBLE : View.INVISIBLE;
 
+        if (visible) {
+            TicketsWallet.Ticket ticket = Passenger.getInstance().getTicketsWallet().getValidated();
+            validated_ticket_type_text_.setText(ticket.getTypeVerbose());
+            //validated_ticket_time_left_text_.setText(ticket.getTimestamp());
+        }
+
         validated_ticket_text_.setVisibility(visibility);
         validated_ticket_wrapper_.setVisibility(visibility);
+
     }
 
     public void showTicket(View v) {
@@ -155,19 +164,36 @@ public class ViewTicketsActivity extends Activity {
         } else {
             Intent intent = new Intent(ViewTicketsActivity.this, ShowTicketActivity.class);
             intent.putExtra(ShowTicketActivity.EXTRA_TICKET_TYPE, ticket_type);
-            startActivity(intent);
+            startActivityForResult(intent, USE_TICKET_REQUEST);
         }
+    }
+
+    public void showValidatedTicket(View v) {
+        startActivity(new Intent(ViewTicketsActivity.this, ShowValidatedTicketActivity.class));
     }
 
     @Override
     protected void onActivityResult(int request_code, int result_code, Intent data) {
         if (request_code == BUY_TICKETS_REQUEST) {
-            if (result_code == BuyTicketsActivity.RESULT_OK) {
+            if (result_code == RESULT_OK) {
                 boolean new_tickets = data.getBooleanExtra(BuyTicketsActivity.EXTRA_NEW_TICKETS, false);
                 if (new_tickets) {
                     refreshTickets();
                     Toast.makeText(this, "New tickets added", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else if (request_code == USE_TICKET_REQUEST) {
+            if (result_code == RESULT_OK) {
+                boolean validated_ticket = data.getBooleanExtra(ShowTicketActivity.EXTRA_VALIDATED_TICKET, false);
+                if (validated_ticket) {
+                    int ticket_type = data.getIntExtra(ShowTicketActivity.EXTRA_TICKET_TYPE, 0);
 
+                    TicketsWallet tickets_wallet = Passenger.getInstance().getTicketsWallet();
+                    tickets_wallet.setValidated(ticket_type, 0);
+
+                    setValidatedTicketVisible(true);
+
+                    Toast.makeText(this, "Ticket successfully validated", Toast.LENGTH_SHORT).show();
                 }
             }
         }

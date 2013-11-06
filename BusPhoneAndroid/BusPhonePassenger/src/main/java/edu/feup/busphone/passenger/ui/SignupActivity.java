@@ -24,6 +24,7 @@ import java.util.HashMap;
 import edu.feup.busphone.passenger.R;
 import edu.feup.busphone.passenger.client.Passenger;
 import edu.feup.busphone.passenger.util.network.PassengerNetworkUtilities;
+import edu.feup.busphone.ui.ProgressDialogFragment;
 import edu.feup.busphone.util.text.FormTextWatcher;
 import edu.feup.busphone.util.text.PasswordFontfaceWatcher;
 import edu.feup.busphone.util.network.WebServiceCallRunnable;
@@ -43,6 +44,8 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
     private TextView[] required_fields_;
 
     private Button signup_button_;
+
+    private ProgressDialogFragment progress_dialog_fragment_;
 
     @Override
     protected void onCreate(Bundle saved_instance_state) {
@@ -100,6 +103,8 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
 
         PasswordFontfaceWatcher.register(password_edit_);
         FormTextWatcher.register(required_fields_, this);
+
+        progress_dialog_fragment_ = ProgressDialogFragment.newInstance(null, false);
     }
 
     public void signup(View v) {
@@ -112,6 +117,8 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
         final String expiry_month = expiry_month_spinner_.getSelectedItem().toString();
         final String cv2 = cv2_edit_.getText().toString();
 
+        progress_dialog_fragment_.show(getFragmentManager(), "signup_progress");
+
         Thread signup_thread = new Thread(new WebServiceCallRunnable(getWindow().getDecorView().getHandler()) {
             @Override
             public void run() {
@@ -122,6 +129,7 @@ public class SignupActivity extends Activity implements FormTextWatcher.FormList
                 handler_.post(new Runnable() {
                     @Override
                     public void run() {
+                        progress_dialog_fragment_.dismiss();
                         if (registration_success) {
                             String token = null;
                             if (login_response.containsKey("token")) {

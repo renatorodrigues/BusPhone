@@ -34,6 +34,10 @@ public class TicketsWallet {
             return type_;
         }
 
+        public String getTypeVerbose() {
+            return ("T" + (type_ + 1));
+        }
+
         public boolean isUsed() {
             return used_;
         }
@@ -68,6 +72,7 @@ public class TicketsWallet {
         }
     }
 
+    private Ticket validated_ = null;
     private ArrayList<ArrayList<Ticket>> tickets_collection_;
 
     public TicketsWallet() {
@@ -75,6 +80,16 @@ public class TicketsWallet {
         for (int i = 0; i < 3; ++i) {
             tickets_collection_.add(new ArrayList<Ticket>());
         }
+    }
+
+    public Ticket getValidated() {
+        return validated_;
+    }
+
+    public void setValidated(int type, int index) {
+        Ticket ticket = tickets_collection_.get(type).get(index);
+        tickets_collection_.get(type).remove(index);
+        validated_ = ticket;
     }
 
     public Ticket getTicket(int type, int index) {

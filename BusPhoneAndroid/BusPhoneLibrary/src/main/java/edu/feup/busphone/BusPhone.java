@@ -29,6 +29,9 @@ public class BusPhone extends Application {
         public static final String PREF_REGISTERED = "registered";
         public static final String PREF_AUTH_TOKEN = "auth_token";
 
+        // Bus
+        public static final String PREF_BUS_ID = "bus_id";
+
         public static final String VALIDATE_CHANNEL_NAME = "validate_channel";
         public static final UUID VALIDATE_CHANNEL_UUID = UUID.fromString("575a64f6-f514-4b4d-99d3-f3b57d38f5e2");
 

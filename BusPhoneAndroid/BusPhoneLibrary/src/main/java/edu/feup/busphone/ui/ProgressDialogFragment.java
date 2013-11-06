@@ -50,7 +50,11 @@ public class ProgressDialogFragment extends DialogFragment {
         progress_bar_ = (ProgressBar) v.findViewById(R.id.progress_bar);
         message_text_ = (TextView) v.findViewById(R.id.message_text);
 
-        message_text_.setText(message_);
+        if (message_ == null || "".equals(message_text_)) {
+            message_text_.setVisibility(View.GONE);
+        } else {
+            message_text_.setText(message_);
+        }
 
         return v;
     }
