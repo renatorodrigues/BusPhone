@@ -42,7 +42,7 @@ exports.tickets = function(req, res){
 
 	function get_tickets(id){
 		db.serialize(function() {
-			db.all("SELECT ticketID AS id,type,used,time as timestamp FROM tickets WHERE clientID_FK=$id",
+			db.all("SELECT ticketID AS id,type,used,time as timestamp FROM tickets WHERE clientID_FK=$id AND used=0",
 				{$id:id}, function(err, rows) {
 
 					if(err!=null){util.out(res,3,{err:err});return;}
