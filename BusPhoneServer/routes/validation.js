@@ -45,15 +45,33 @@ exports.inspect = function(req, res){
 
 	var db = req.db;
 	var bus_id = req.query.id;/*,
-		ticket_id = req.query.ticket;*/
+	ticket_id = req.query.ticket;*/
 
 	if(bus_id==null ||/* ticket_id==null ||*/ bus_id=="" /*|| ticket_id==""*/){
 		return util.out(res,2);
 	}
 
-	var query = 
-	"SELECT ticketID AS id,type,used,time as timestamp FROM tickets WHERE busID_FK=$bus_id AND " +
-	"time >= Datetime('now','localtime', '-90 Minute')";
+	db.serialize(function() {
+		var query = 
+		"SELECT busID as id FROM bus WHERE identifier = $bus_id";
+		var q = db.get(query, {$bus_id:bus_id},function(err,row){
+
+			if(err!=null){ return util.out(res,3,{err:err.toString()})}
+
+				if (typeof(row) != 'undefined')
+					getAllTickets(row.id);
+				else
+					return util.out(res, 5);
+
+
+			});
+	});	
+
+	function getAllTickets(id){
+
+		var query = 
+		"SELECT ticketID AS id,type,used,time as timestamp FROM tickets WHERE busID_FK = $id AND " +
+		"time >= Datetime('now','localtime', '-90 Minute')";
 
 	/*
 	"CASE "+
@@ -63,16 +81,20 @@ exports.inspect = function(req, res){
 	*/
 
 	db.serialize(function() {
-		var q = db.get(query, {$bus_id:1},function(err,rows){
+		var q = db.all(query, {$id:id},function(err,rows){
 
 			if(err!=null){ return util.out(res,3,{err:err.toString()})}
 
-			if (typeof(rows) != 'undefined')
-					return util.out(res,0,{tickets:rows});
-				else
-					return util.out(res, 5);
+			//if (typeof(rows) != 'undefined')
+		
+				return util.out(res,0,{tickets:rows});
 
-			
-		});
+				//else
+					//return util.out(res, 5);
+
+
+				});
 	});	
+}
+
 };

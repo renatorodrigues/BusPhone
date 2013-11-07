@@ -54,31 +54,29 @@ public class DecodeTicketActivity extends Activity {
 
     private ProgressDialogFragment progress_dialog_fragment_;
 
+    private FrameLayout preview_layout_;
+
     @Override
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
         setContentView(R.layout.decode_ticket_activity);
 
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//        auto_focus_handler_ = new Handler();
 
-        auto_focus_handler_ = new Handler();
-        //boolean camera_opened = safeCameraOpen();
-        camera_ = Camera.open();
-        //Log.d(TAG, Boolean.toString(camera_opened));
+//        camera_ = getCameraInstance();
 
-        previewing_ = true;
+//        previewing_ = true;
 
-        scanner_ = new ImageScanner();
-        scanner_.setConfig(0, Config.X_DENSITY, 3);
-        scanner_.setConfig(0, Config.Y_DENSITY, 3);
+//        scanner_ = new ImageScanner();
+//        scanner_.setConfig(0, Config.X_DENSITY, 3);
+//        scanner_.setConfig(0, Config.Y_DENSITY, 3);
 
-        camera_preview_ = new CameraPreview(this, camera_, preview_callback_, auto_focus_callback_);
+//        camera_preview_ = new CameraPreview(this, camera_, preview_callback_, auto_focus_callback_);
 
-        //TODO: start from here
-
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(camera_preview_);
+        preview_layout_ = (FrameLayout) findViewById(R.id.camera_preview);
+//        preview_layout_.addView(camera_preview_);
 
         status_linear_layout_ = (LinearLayout) findViewById(R.id.status_linear_layout);
 
@@ -88,11 +86,44 @@ public class DecodeTicketActivity extends Activity {
         addStatus("Scanning...");
     }
 
-    private boolean safeCameraOpen() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            if (camera_ == null) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+                auto_focus_handler_ = new Handler();
+
+                camera_ = getCameraInstance();
+
+                previewing_ = true;
+
+                scanner_ = new ImageScanner();
+                scanner_.setConfig(0, Config.X_DENSITY, 3);
+                scanner_.setConfig(0, Config.Y_DENSITY, 3);
+
+                camera_preview_ = new CameraPreview(this, camera_, preview_callback_, auto_focus_callback_);
+                preview_layout_.addView(camera_preview_);
+
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releaseCamera();
+        preview_layout_.removeView(camera_preview_);
+    }
+
+    /*private boolean safeCameraOpen() {
         boolean opened = false;
 
         try {
-            releaseCameraAndPreview();
+            releaseCamera();
             camera_ = Camera.open();
             opened = camera_ != null;
         } catch (Exception e) {
@@ -101,17 +132,29 @@ public class DecodeTicketActivity extends Activity {
         }
 
         return opened;
-    }
+    }*/
 
-    private void releaseCameraAndPreview() {
-        previewing_ = false;
-        if (camera_ != null) {
-            camera_.setPreviewCallback(null);
-            camera_.release();
+    public static Camera getCameraInstance(){
+        Camera c = null;
+        try {
+            c = Camera.open();
+        } catch (Exception e){
         }
-
-        camera_ = null;
+        return c;
     }
+
+
+    protected void releaseCamera() {
+        if (camera_ != null) {
+            previewing_ = false;
+            camera_.setPreviewCallback(null);
+            camera_preview_.getHolder().removeCallback(camera_preview_);
+            camera_.release();
+            camera_ = null;
+            camera_preview_ = null;
+        }
+    }
+
 
     protected void setPreviewEnabled(boolean enabled) {
         previewing_ = enabled;
@@ -123,15 +166,6 @@ public class DecodeTicketActivity extends Activity {
         } else {
             camera_.setPreviewCallback(null);
             camera_.stopPreview();
-        }
-    }
-
-    protected void releaseCamera() {
-        if (camera_ != null) {
-            previewing_ = false;
-            camera_.setPreviewCallback(null);
-            camera_.release();
-            camera_ = null;
         }
     }
 
@@ -175,18 +209,6 @@ public class DecodeTicketActivity extends Activity {
             auto_focus_handler_.postDelayed(auto_focus_runnable_, 1000);
         }
     };
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        releaseCamera();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        releaseCameraAndPreview();
-    }
 
     public void addStatus(String message) {
         TextView status_text = new TextView(DecodeTicketActivity.this);

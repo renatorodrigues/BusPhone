@@ -9,10 +9,13 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.feup.busphone.BusPhone;
 import edu.feup.busphone.client.Ticket;
 import edu.feup.busphone.inspector.R;
 import edu.feup.busphone.inspector.util.network.InspectorNetworkUtilities;
@@ -140,6 +143,30 @@ public class InspectionActivity extends CameraActivity implements ValidationResu
         setPreviewEnabled(true);
     }
 
+    public long timeLeft(Ticket ticket) {
+        Calendar now = Calendar.getInstance();
+
+        Timestamp timestamp = Timestamp.valueOf(ticket.getTimestamp());
+        Calendar validation = Calendar.getInstance();
+        validation.setTimeInMillis(timestamp.getTime());
+        int ticket_duration = 0;
+        switch (ticket.getType()) {
+            case Ticket.T1:
+                ticket_duration = BusPhone.Constants.T1_DURATION;
+                break;
+            case Ticket.T2:
+                ticket_duration = BusPhone.Constants.T2_DURATION;
+                break;
+            case Ticket.T3:
+                ticket_duration = BusPhone.Constants.T3_DURATION;
+                break;
+        }
+
+        validation.add(Calendar.SECOND, ticket_duration);
+
+        return validation.getTime().getTime() - now.getTime().getTime();
+    }
+
     private void validateTicket(String ticket_id) {
         boolean valid = false;
         Ticket ticket = getTicket(ticket_id);
@@ -147,8 +174,7 @@ public class InspectionActivity extends CameraActivity implements ValidationResu
             int type = ticket.getType();
             String timestamp = ticket.getTimestamp();
 
-            valid = true;
-            
+            valid = timeLeft(ticket) > 0;
         }
 
         popUpValidationResult(valid);
