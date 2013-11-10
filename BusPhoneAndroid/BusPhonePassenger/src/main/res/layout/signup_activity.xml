@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Personal Details"
-                style="@style/SectionHeader" />
+                style="@style/SectionHeaderUnderline" />
 
             <EditText
                 android:id="@+id/name_edit"
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/password_edit"
                 android:text="Credit Card"
-                style="@style/SectionHeader" />
+                style="@style/SectionHeaderUnderline" />
 
             <EditText
                 android:id="@+id/card_number_edit"

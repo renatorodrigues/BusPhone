@@ -81,7 +81,11 @@ public class ViewTicketsActivity extends Activity {
 
         //setValidatedTicketVisible(passenger.getTicketsWallet().hasValidated());
 
-        refreshTickets();
+        if (!PassengerNetworkUtilities.isNetworkAvailable()) {
+            PassengerNetworkUtilities.showNoConnectionDialog(ViewTicketsActivity.this);
+        } else {
+            refreshTickets();
+        }
     }
 
     public void refreshTickets() {

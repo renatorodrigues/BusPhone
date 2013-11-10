@@ -1,6 +1,13 @@
 package edu.feup.busphone.util.network;
 
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.provider.Settings;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -27,6 +34,8 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
+import edu.feup.busphone.BusPhone;
 
 public class NetworkUtilities {
     private static final String TAG = "NetworkUtilities";
@@ -126,5 +135,34 @@ public class NetworkUtilities {
     protected static JSONObject put(String uri,
                                     ArrayList<NameValuePair> parameters) {
         return enclosingRequest(new HttpPut(uri), parameters);
+    }
+
+    public static boolean isNetworkAvailable() {
+        ConnectivityManager connectivity_manager = (ConnectivityManager) BusPhone.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo active_network_info = connectivity_manager.getActiveNetworkInfo();
+        return active_network_info != null && active_network_info.isConnected();
+    }
+
+    public static void showNoConnectionDialog(final Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false)
+                .setTitle("No connection")
+                .setMessage("This application requires network access. Enable mobile network or Wi-Fi to download data.")
+                .setPositiveButton("Settings",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                context.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+        builder.create().show();
     }
 }

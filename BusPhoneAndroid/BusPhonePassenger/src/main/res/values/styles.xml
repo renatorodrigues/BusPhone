@@ -20,6 +20,7 @@
     <style name="TitleLight" parent="android:Widget.Holo.Light.TextView">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@color/dark_gray</item>
     </style>
 
     <style name="InvoiceLabel">
@@ -46,12 +47,24 @@
     <style name="TicketCounterLabel">
         <item name="android:textAlignment">center</item>
         <item name="android:gravity">center</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+    <style name="TicketCounterLabelDark">
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/dark_gray</item>
     </style>
 
     <style name="TicketCounter">
         <item name="android:gravity">center</item>
         <item name="android:textSize">50sp</item>
+        <item name="android:textColor">@color/card_title_text</item>
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
@@ -67,6 +80,11 @@
         <item name="android:textSize">50sp</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TicketCard">
+        <item name="android:padding">5dp</item>
+        <item name="android:background">@drawable/card</item>
     </style>
 
 </resources>

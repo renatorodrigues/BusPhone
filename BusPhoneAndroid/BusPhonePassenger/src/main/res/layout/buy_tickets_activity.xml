@@ -11,13 +11,19 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Get more tickets"
+        android:text="@string/get_more_tickets"
         style="@style/Hero"/>
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/buy_button">
+        android:layout_above="@+id/buy_button"
+        android:paddingTop="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="5dp"
+        android:background="@drawable/card"
+        android:layout_marginBottom="16dp">
 
         <TableRow
             android:layout_width="match_parent"
@@ -27,21 +33,24 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="T1"
+                android:text="@string/T1"
+                android:background="@drawable/label"
                 style="@style/TicketCounterLabel" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="T2"
+                android:text="@string/T2"
+                android:background="@drawable/label"
                 style="@style/TicketCounterLabel" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="T3"
+                android:text="@string/T3"
+                android:background="@drawable/label"
                 style="@style/TicketCounterLabel" />
 
         </TableRow>
@@ -55,7 +64,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="+"
+                android:text="@string/plus_sign"
                 android:onClick="increment"
                 style="?android:attr/buttonBarButtonStyle"/>
 
@@ -64,7 +73,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="+"
+                android:text="@string/plus_sign"
                 android:onClick="increment"
                 style="?android:attr/buttonBarButtonStyle"/>
 
@@ -73,7 +82,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="+"
+                android:text="@string/plus_sign"
                 android:onClick="increment"
                 style="?android:attr/buttonBarButtonStyle"/>
         </TableRow>
@@ -86,21 +95,21 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0"
+                android:text="@string/zero"
                 style="@style/TicketCounter" />
             <TextView
                 android:id="@+id/t2_counter_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0"
+                android:text="@string/zero"
                 style="@style/TicketCounter" />
             <TextView
                 android:id="@+id/t3_counter_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0"
+                android:text="@string/zero"
                 style="@style/TicketCounter" />
         </TableRow>
         <TableRow
@@ -112,7 +121,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="-"
+                android:text="@string/minus_sign"
                 android:onClick="decrement"
                 style="?android:attr/buttonBarButtonStyle" />
 
@@ -121,7 +130,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="-"
+                android:text="@string/minus_sign"
                 android:onClick="decrement"
                 style="?android:attr/buttonBarButtonStyle"/>
 
@@ -130,7 +139,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="-"
+                android:text="@string/minus_sign"
                 android:onClick="decrement"
                 style="?android:attr/buttonBarButtonStyle"/>
         </TableRow>
@@ -142,5 +151,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:onClick="buy"
-        android:text="Buy" />
+        android:text="@string/buy"
+        style="@style/FlatButton"/>
 </RelativeLayout>

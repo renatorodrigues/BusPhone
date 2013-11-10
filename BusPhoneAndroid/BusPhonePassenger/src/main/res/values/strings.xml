@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_signup">Signup</string>
     <string name="title_activity_login">Login</string>
-    <string name="title_activity_view_tickets">My Tickets</string>
+    <string name="title_activity_view_tickets">Ticket Wallet</string>
     <string name="title_activity_buy_tickets">Buy Tickets</string>
     <string name="title_activity_show_ticket">Ticket</string>
     <string name="title_activity_splash">BusPhone Passenger</string>
@@ -14,7 +14,7 @@
     <string name="username_already_in_use">Username is already in use.</string>
     <string name="login_unsuccessful">Check your username and password and try again.</string>
     <string name="unknown_error">An unknown error has occurred. Try again.</string>
-    <string name="buy_tickets">Buy Tickets</string>
+    <string name="buy_tickets">Buy tickets</string>
     <string name="euro">€</string>
     <string name="log_out">Log out</string>
     <string name="log_in">Log in</string>
@@ -41,5 +41,17 @@
 
     <string name="title_activity_show_validated_ticket">Validated Ticket</string>
     <string name="hello_world">Hello world!</string>
+    <string name="T1">T1</string>
+    <string name="T2">T2</string>
+    <string name="T3">T3</string>
+    <string name="get_more_tickets">Get more tickets</string>
+    <string name="plus_sign">+</string>
+    <string name="zero">0</string>
+    <string name="minus_sign">-</string>
+    <string name="buy">Buy</string>
+    <string name="available_tickets">Available tickets</string>
+    <string name="validated_ticket">Validated ticket</string>
+    <string name="my_ticket_wallet">My ticket wallet</string>
+    <string name="more_tickets">More tickets</string>
 
 </resources>

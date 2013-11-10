@@ -61,22 +61,7 @@ public class DecodeTicketActivity extends Activity {
         super.onCreate(saved_instance_state);
         setContentView(R.layout.decode_ticket_activity);
 
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-//        auto_focus_handler_ = new Handler();
-
-//        camera_ = getCameraInstance();
-
-//        previewing_ = true;
-
-//        scanner_ = new ImageScanner();
-//        scanner_.setConfig(0, Config.X_DENSITY, 3);
-//        scanner_.setConfig(0, Config.Y_DENSITY, 3);
-
-//        camera_preview_ = new CameraPreview(this, camera_, preview_callback_, auto_focus_callback_);
-
         preview_layout_ = (FrameLayout) findViewById(R.id.camera_preview);
-//        preview_layout_.addView(camera_preview_);
 
         status_linear_layout_ = (LinearLayout) findViewById(R.id.status_linear_layout);
 
@@ -118,21 +103,6 @@ public class DecodeTicketActivity extends Activity {
         releaseCamera();
         preview_layout_.removeView(camera_preview_);
     }
-
-    /*private boolean safeCameraOpen() {
-        boolean opened = false;
-
-        try {
-            releaseCamera();
-            camera_ = Camera.open();
-            opened = camera_ != null;
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to open Camera");
-            e.printStackTrace();
-        }
-
-        return opened;
-    }*/
 
     public static Camera getCameraInstance(){
         Camera c = null;

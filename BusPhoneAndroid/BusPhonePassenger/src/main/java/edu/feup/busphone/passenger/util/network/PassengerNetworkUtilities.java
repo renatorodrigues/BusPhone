@@ -61,13 +61,13 @@ public class PassengerNetworkUtilities extends NetworkUtilities {
         String uri = BASE_URL + "/tickets" + "?token=" + token;
         JSONObject response = get(uri);
 
-        try {
+        /*try {
             Log.d(TAG, response.toString(2));
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
 
-        return TicketsWallet.valueOf(response);
+        return response != null ? TicketsWallet.valueOf(response) : null;
     }
 
     public static HashMap<String, String> buy(String token, int t1, int t2, int t3, boolean confirm) {
