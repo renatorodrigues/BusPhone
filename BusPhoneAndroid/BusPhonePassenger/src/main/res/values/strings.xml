@@ -22,7 +22,7 @@
     <string name="sign_up">Sign up</string>
     <string name="none">None</string>
     <string name="extra_ticket">Extra Ticket:</string>
-    <string name="need_ticket">No tickets to validate.</string>
+    <string name="need_ticket">No tickets to validate</string>
 
     <string-array name="months">
         <item>January</item>
@@ -53,5 +53,7 @@
     <string name="validated_ticket">Validated ticket</string>
     <string name="my_ticket_wallet">My ticket wallet</string>
     <string name="more_tickets">More tickets</string>
+    <string name="new_tickets_added">New tickets added</string>
+    <string name="ticket_successfully_validated">Ticket successfully validated</string>
 
 </resources>

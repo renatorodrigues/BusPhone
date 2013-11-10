@@ -35,8 +35,6 @@ public class ViewTicketsActivity extends Activity {
     public static final int BUY_TICKETS_REQUEST = 1;
     public static final int USE_TICKET_REQUEST = 2;
 
-    private ArrayAdapter<String> adapter_;
-
     private TextView t1_counter_text_;
     private TextView t2_counter_text_;
     private TextView t3_counter_text_;
@@ -72,8 +70,7 @@ public class ViewTicketsActivity extends Activity {
         buy_button_ = (Button) findViewById(R.id.add_tickets_button);
 
         progress_overlay_ = ((ViewStub) findViewById(R.id.progress_stub)).inflate();
-
-         // TODO change
+        progress_overlay_.setVisibility(View.INVISIBLE);
 
         //Passenger passenger = Passenger.getInstance();
 
@@ -106,7 +103,7 @@ public class ViewTicketsActivity extends Activity {
                         if (success) {
                             populateView();
                         } else {
-                            Toast.makeText(ViewTicketsActivity.this, "Couldn't get your tickets", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ViewTicketsActivity.this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
                         }
 
                         progress_overlay_.setVisibility(View.INVISIBLE);
@@ -118,8 +115,6 @@ public class ViewTicketsActivity extends Activity {
     }
 
     private void populateView() {
-        Log.d(TAG, "populating view");
-
         TicketsWallet wallet = Passenger.getInstance().getTicketsWallet();
 
         int[] counts = wallet.getCounts();
@@ -129,7 +124,6 @@ public class ViewTicketsActivity extends Activity {
 
         buy_button_.setEnabled(wallet.getTotal() < 30);
 
-        Log.d(TAG, "wallet has validated ticket: " + Boolean.toString(wallet.hasValidated()));
         setValidatedTicketVisible(wallet.hasValidated());
     }
 
@@ -176,9 +170,6 @@ public class ViewTicketsActivity extends Activity {
             validated_time_left_.setTimeInMillis(time_left_millis);
 
             startCountDownTimer(time_left_millis);
-
-        } else {
-
         }
 
         validated_ticket_text_.setVisibility(visibility);
@@ -268,7 +259,7 @@ public class ViewTicketsActivity extends Activity {
                 boolean new_tickets = data.getBooleanExtra(BuyTicketsActivity.EXTRA_NEW_TICKETS, false);
                 if (new_tickets) {
                     refreshTickets();
-                    Toast.makeText(this, "New tickets added", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.new_tickets_added, Toast.LENGTH_SHORT).show();
                 }
             }
         } else if (request_code == USE_TICKET_REQUEST) {
@@ -276,18 +267,11 @@ public class ViewTicketsActivity extends Activity {
                 boolean validated_ticket = data.getBooleanExtra(ShowTicketActivity.EXTRA_VALIDATED_TICKET, false);
                 if (validated_ticket) {
                     refreshTickets();
-                    /*int ticket_type = data.getIntExtra(ShowTicketActivity.EXTRA_TICKET_TYPE, 0);
 
-                    TicketsWallet tickets_wallet = Passenger.getInstance().getTicketsWallet();
-                    tickets_wallet.setValidated(ticket_type, 0);
-
-                    setValidatedTicketVisible(true);*/
-
-                    Toast.makeText(this, "Ticket successfully validated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.ticket_successfully_validated, Toast.LENGTH_SHORT).show();
                 }
             }
         }
-
     }
 
     public void buyTickets(View v) {

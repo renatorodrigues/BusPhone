@@ -34,7 +34,7 @@
     <style name="FlatButton" parent="@android:style/Widget.Button">
         <item name="android:textAllCaps">true</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">@color/flat_button_colors</item>
         <item name="android:background">@drawable/flat_button</item>
     </style>
 

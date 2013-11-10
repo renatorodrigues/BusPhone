@@ -52,6 +52,11 @@ public class LoginActivity extends Activity implements FormTextWatcher.FormListe
     }
 
     public void login(View v) {
+        if (!PassengerNetworkUtilities.isNetworkAvailable()) {
+            PassengerNetworkUtilities.showNoConnectionDialog(LoginActivity.this);
+            return;
+        }
+
         final String username = username_edit_.getText().toString();
         final String password = password_edit_.getText().toString();
 

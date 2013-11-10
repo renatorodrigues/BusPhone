@@ -108,6 +108,7 @@
         android:layout_alignParentBottom="true"
         android:enabled="false"
         android:onClick="signup"
-        android:text="Sign Up" />
+        android:text="Sign Up"
+        style="@style/FlatButton" />
 
 </RelativeLayout>

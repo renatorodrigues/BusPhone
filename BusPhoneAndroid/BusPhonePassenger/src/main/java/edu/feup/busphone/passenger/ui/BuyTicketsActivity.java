@@ -115,6 +115,11 @@ public class BuyTicketsActivity extends Activity {
     }
 
     public void buy(View v) {
+        if (!PassengerNetworkUtilities.isNetworkAvailable()) {
+            PassengerNetworkUtilities.showNoConnectionDialog(BuyTicketsActivity.this);
+            return;
+        }
+
         final String token = Passenger.getInstance().getAuthToken();
         final int t1 = Integer.parseInt(t1_counter_text_.getText().toString());
         final int t2 = Integer.parseInt(t2_counter_text_.getText().toString());

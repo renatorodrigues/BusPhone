@@ -146,6 +146,7 @@ public class NetworkUtilities {
     public static void showNoConnectionDialog(final Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("No connection")
                 .setMessage("This application requires network access. Enable mobile network or Wi-Fi to download data.")
                 .setPositiveButton("Settings",
