@@ -81,14 +81,15 @@ public class ViewTicketsActivity extends Activity {
 
         //setValidatedTicketVisible(passenger.getTicketsWallet().hasValidated());
 
-        if (!PassengerNetworkUtilities.isNetworkAvailable()) {
-            PassengerNetworkUtilities.showNoConnectionDialog(ViewTicketsActivity.this);
-        } else {
-            refreshTickets();
-        }
+        refreshTickets();
     }
 
     public void refreshTickets() {
+        if (!PassengerNetworkUtilities.isNetworkAvailable()) {
+            PassengerNetworkUtilities.showNoConnectionDialog(ViewTicketsActivity.this);
+            return;
+        }
+
         Thread tickets = new Thread(new WebServiceCallRunnable(new Handler()) {
             @Override
             public void run() {
